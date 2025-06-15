@@ -42,6 +42,8 @@ public partial class App : Application
     public static Window TaskTrayWindow { get; } = new TaskTrayWindow();
     public static WindowEx MainWindow { get; } = new MainWindow();
 
+    public static bool HandleClosedEvents { get; set; } = true;
+
     public static UIElement? AppTitlebar { get; set; }
 
     public App()
@@ -107,10 +109,25 @@ public partial class App : Application
 
         await App.GetService<IActivationService>().ActivateAsync(args);
 
-#if !DEBUG
+        MainWindow.Closed += (sender, args) =>
+        {
+            if (HandleClosedEvents)
+            {
+                args.Handled = true;
+                MainWindow.Hide();
+            }
+        };
+
+        //#if !DEBUG
         MainWindow.Hide();
         TaskTrayWindow.Activate();
         TaskTrayWindow.Hide();
-#endif
+//#endif
+    }
+
+    public void CloseWindow()
+    {
+        MainWindow.Close();
+        TaskTrayWindow.Close();
     }
 }

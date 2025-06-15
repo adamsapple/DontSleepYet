@@ -16,16 +16,18 @@ public static class StartUpHelper
         //var path = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
         //var filename = Path.GetFileName(Application.ExecutablePath);
         //var app = System.Windows.Application.Current;
-        var ExecutablePath = Environment.GetCommandLineArgs()[0];
+        //var executablePath = Environment.GetCommandLineArgs()[0];
+        var executablePath = Environment.ProcessPath!;
+        
 
         if (title == null)
         {
-            title = Path.GetFileNameWithoutExtension(ExecutablePath);
+            title = Path.GetFileNameWithoutExtension(executablePath);
         }
 
         var path = GetStartupShortcutPath(title);
 
-        makeShortcut(ExecutablePath, path);
+        makeShortcut(executablePath, path);
     }
 
     //
