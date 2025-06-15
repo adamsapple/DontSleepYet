@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "DontSleepYet (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "DontSleepYet (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

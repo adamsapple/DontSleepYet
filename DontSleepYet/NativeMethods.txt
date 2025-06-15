@@ -1,0 +1,6 @@
+﻿GetCursorPos
+SetCursorPos
+VK_F15
+SendInput
+GetDpiForWindow
+GetWindowHandle
