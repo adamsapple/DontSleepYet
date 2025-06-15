@@ -37,9 +37,9 @@ public sealed partial class MainWindow : WindowEx
         });
     }
 
-    private void WindowEx_Closed(object sender, WindowEventArgs args)
-    {
-        args.Handled = true;
-        this.Hide();
-    }
+    //private void WindowEx_Closed(object sender, WindowEventArgs args)
+    //{
+    //    args.Handled = true;
+    //    this.Hide();
+    //}
 }

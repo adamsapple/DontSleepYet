@@ -18,7 +18,7 @@
     Title="asdfasdfasfd"
     PersistenceId="MainWindow"
     mc:Ignorable="d"
-    Closed="WindowEx_Closed">
+    >
     <Window.SystemBackdrop>
         <MicaBackdrop/>
     </Window.SystemBackdrop>
