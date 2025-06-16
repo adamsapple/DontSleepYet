@@ -21,9 +21,4 @@ public sealed partial class MainPage : Page
     {
         ViewModel.InitializeCommand.Execute(null);
     }
-
-    private void Page_Loading(Microsoft.UI.Xaml.FrameworkElement sender, object args)
-    {
-
-    }
 }

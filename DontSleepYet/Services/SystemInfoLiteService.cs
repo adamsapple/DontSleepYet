@@ -104,19 +104,24 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
         //var result = 0.45f;
 
         /// CPU使用率を計算する：各値の使い方がよくわかってないが、こんな気がする
-        var result = (float)((kpu.TotalSeconds - idle.TotalSeconds) / kpu.TotalSeconds);
+        if (kpu.TotalSeconds != 0)
+        {
+            var cpu_usage = (kpu.TotalSeconds - idle.TotalSeconds) / kpu.TotalSeconds;
 
-        OnSystemInfoUpdated?.Invoke(result);
-        
+            var mem_usage = 1.0 - (memUsage.AvailableSizeInBytes * 1.0 / memUsage.TotalPhysicalSizeInBytes);
+
+            OnSystemInfoUpdated?.Invoke((float)cpu_usage, (float)mem_usage);
+        }
+
         var swap_reserve = memUsage.CommittedSizeInBytes - memUsage.TotalPhysicalSizeInBytes;
         var phis_using   = memUsage.TotalPhysicalSizeInBytes - memUsage.AvailableSizeInBytes;
         //var commit_using
         //var commit_total
-        Debug.WriteLine($"phisical.Total: {memUsage.TotalPhysicalSizeInBytes / 1024.0 / 1024 / 1024 }");
-        Debug.WriteLine($"phisical.Using: {phis_using / 1024.0 / 1024 / 1024}");
-        Debug.WriteLine($"phisical.Free : {memUsage.AvailableSizeInBytes / 1024.0 / 1024 / 1024}");
-        Debug.WriteLine($"virtua.Reserve: {memUsage.CommittedSizeInBytes / 1024.0 / 1024 / 1024}");
-        Debug.WriteLine($"swap.Reserve  : {swap_reserve / 1024.0 / 1024 / 1024}");
+        //Debug.WriteLine($"phisical.Total: {memUsage.TotalPhysicalSizeInBytes / 1024.0 / 1024 / 1024 }");
+        //Debug.WriteLine($"phisical.Using: {phis_using / 1024.0 / 1024 / 1024}");
+        //Debug.WriteLine($"phisical.Free : {memUsage.AvailableSizeInBytes / 1024.0 / 1024 / 1024}");
+        //Debug.WriteLine($"virtua.Reserve: {memUsage.CommittedSizeInBytes / 1024.0 / 1024 / 1024}");
+        //Debug.WriteLine($"swap.Reserve  : {swap_reserve / 1024.0 / 1024 / 1024}");
         //Debug.WriteLine($"user  : {user.TotalSeconds}");
         //Debug.WriteLine($"idle  : {idle.TotalSeconds}");
         //Debug.WriteLine($"k+u   : {(kernel + user).TotalSeconds}");

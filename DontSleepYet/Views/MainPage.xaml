@@ -10,7 +10,6 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    Loading="Page_Loading"
     >
     <Page.Resources>
         <converter:StringFormatConverter x:Key="FormatStringConverter" />
@@ -26,32 +25,55 @@
                 <ToggleSwitch IsOn="{x:Bind ViewModel.IsRegistStartUp, Mode=TwoWay}"  Margin="0,0,-30,0" />
                 <TextBlock x:Uid="StartUp_TogleSwitch" VerticalAlignment="Center" />
             </StackPanel>
-            <Grid HorizontalAlignment="Left">
-                <ctc:RadialGauge x:Name="RadialGauge"
-                                 Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}"
-                                 Width="120"
-                                 Minimum="0"
-                                 Maximum="1"
-                                 MinAngle="-140"
-                                 MaxAngle="140"
-                                 TickLength="3"
-                                 TickWidth="10"
-                                 TickSpacing="30"
-                                 TickPadding="10"
-                                 NeedleWidth="0"
-                                 ScaleWidth="20"
-                                 ValueStringFormat="CPU%"
-                 />
-                <TextBlock Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay, Converter={StaticResource FormatStringConverter}, ConverterParameter='{}{0:P0}'}"
-                           FontWeight="ExtraBold"
-                           FontSize="42"
-                           FontFamily="Segoe UI Variable"
-                           FontStretch="UltraCondensed"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           />
-            </Grid>
             <StackPanel Orientation="Horizontal">
-                
+                <Grid HorizontalAlignment="Left" Padding="4">
+                    <ctc:RadialGauge x:Name="RadialGaugeCpu"
+                                     Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}"
+                                     Width="120"
+                                     Minimum="0"
+                                     Maximum="1"
+                                     MinAngle="-140"
+                                     MaxAngle="140"
+                                     TickLength="3"
+                                     TickWidth="10"
+                                     TickSpacing="30"
+                                     TickPadding="10"
+                                     NeedleWidth="0"
+                                     ScaleWidth="20"
+                                     ValueStringFormat="CPU%"
+                                     />
+                    <TextBlock Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay, Converter={StaticResource FormatStringConverter}, ConverterParameter='{}{0:P0}'}"
+                               FontWeight="ExtraBold"
+                               FontSize="32"
+                               FontFamily="Segoe UI Variable"
+                               FontStretch="UltraCondensed"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               />
+                </Grid>
+                <Grid HorizontalAlignment="Left" Padding="4">
+                    <ctc:RadialGauge x:Name="RadialGaugePhisicalMemory"
+                                     Value="{x:Bind ViewModel.MemUsage, Mode=OneWay}"
+                                     Width="120"
+                                     Minimum="0"
+                                     Maximum="1"
+                                     MinAngle="-140"
+                                     MaxAngle="140"
+                                     TickLength="3"
+                                     TickWidth="10"
+                                     TickSpacing="30"
+                                     TickPadding="10"
+                                     NeedleWidth="0"
+                                     ScaleWidth="20"
+                                     ValueStringFormat="MEMORY%"
+                                     />
+                    <TextBlock Text="{x:Bind ViewModel.MemUsage, Mode=OneWay, Converter={StaticResource FormatStringConverter}, ConverterParameter='{}{0:P0}'}"
+                               FontWeight="ExtraBold"
+                               FontSize="32"
+                               FontFamily="Segoe UI Variable"
+                               FontStretch="UltraCondensed"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               />
+                </Grid>
             </StackPanel>
         </StackPanel>
     </Grid>

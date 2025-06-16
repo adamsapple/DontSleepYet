@@ -75,6 +75,8 @@ public partial class MainViewModel : ObservableRecipient
     [ObservableProperty]
     private double _cpuUsage = 0.0;
 
+    [ObservableProperty]
+    private double _memUsage = 0.0;
 
     private bool isInitialized = false;
     /// <summary>
@@ -92,6 +94,20 @@ public partial class MainViewModel : ObservableRecipient
         IsDontSleepActive = await localSettingsService.ReadSettingAsync<bool>(nameof(IsDontSleepActive));
 
         isInitialized = true;
+    }
+
+
+    [RelayCommand]
+    private async Task SaveWindowPosition()
+    {
+        var window = App.MainWindow;
+        if (window == null)
+        {
+            return;
+        }
+        // Save the current position and size of the window
+        await localSettingsService.SaveSettingAsync("WindowPosition.Left", window.AppWindow.Position.X);
+        await localSettingsService.SaveSettingAsync("WindowPosition.Left", window.AppWindow.Position.Y);
     }
 
     /// <summary>
@@ -126,7 +142,7 @@ public partial class MainViewModel : ObservableRecipient
 
     private readonly DispatchQueue dispatcherQueue;
 
-    private void SystemInfoLiteService_OnSystemInfoUpdated(float cpuUsage)
+    private void SystemInfoLiteService_OnSystemInfoUpdated(float cpuUsage, float memUsage)
     {
         
 
@@ -134,6 +150,7 @@ public partial class MainViewModel : ObservableRecipient
         dispatcherQueue.TryEnqueue(() =>
             {
                 CpuUsage = cpuUsage;
+                MemUsage = memUsage;
             });
     }
 }

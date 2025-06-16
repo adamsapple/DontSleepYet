@@ -30,4 +30,4 @@ public interface ISystemInfoLiteService
     public event SystemInfoUpdated OnSystemInfoUpdated; /// CPU使用率更新イベント
 }
 
-public delegate void SystemInfoUpdated(float cpuUsage);
+public delegate void SystemInfoUpdated(float cpuUsage, float memUsage);
