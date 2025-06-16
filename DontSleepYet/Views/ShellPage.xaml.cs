@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-
+using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.System;
 
 namespace DontSleepYet.Views;
@@ -34,6 +34,19 @@ public sealed partial class ShellPage : Page
         App.MainWindow.SetTitleBar(AppTitleBar);
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+
+        // Replace the problematic line with the following code:        
+        {
+            var iconStream = typeof(App).Assembly.GetManifestResourceStream("DontSleepYet.Assets.WindowIcon.ico");
+            if (iconStream == null)
+            {
+                throw new InvalidOperationException("Resource stream for 'WindowIcon.ico' could not be found.");
+            }
+
+            BitmapImage img = new();
+            img.SetSource(iconStream.AsRandomAccessStream());
+            AppIconImage.Source = img;
+        }
     }
 
     private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

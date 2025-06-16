@@ -3,7 +3,9 @@ using System.Threading;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
 using DontSleepYet.Services;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics;
 using Windows.UI.ViewManagement;
 
@@ -25,9 +27,11 @@ public sealed partial class MainWindow : WindowEx
         this.localSettingsService = App.GetService<ILocalSettingsService>();
         InitializeComponent();
 
-        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
+        //AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/WindowIcon.ico"));
+        
         Content = null;
         Title = "AppDisplayName".GetLocalized();
+        // AppWindow.SetIcon("ms-appx:///Assets/WindowIcon.ico");
 
         // Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
         dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();

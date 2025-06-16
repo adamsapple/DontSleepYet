@@ -7,6 +7,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
 using H.NotifyIcon.Core;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -30,6 +31,16 @@ public sealed partial class TaskTrayWindow : Window
     public TaskTrayWindow()
     {
         InitializeComponent();
+
+        {
+            var iconStream = typeof(App).Assembly.GetManifestResourceStream("DontSleepYet.Assets.WindowIcon.ico");
+            if (iconStream == null)
+            {
+                throw new InvalidOperationException("Resource stream for 'WindowIcon.ico' could not be found.");
+            }
+
+            notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+        }
 
         ExitApplicationCommand = new RelayCommand(Exit);
         ShowHideWindowCommand = new RelayCommand(ShowHideWindow);

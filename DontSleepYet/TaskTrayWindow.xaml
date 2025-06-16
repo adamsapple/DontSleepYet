@@ -10,19 +10,20 @@
     xmlns:windowex="using:WinUIEx"
     xmlns:tb="using:H.NotifyIcon"
     Title="TaskTrayWindow"
-    x:Name="window">
+    x:Name="window"
+    >
 
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <tb:TaskbarIcon x:Name="notifyIcon" >
-        <tb:TaskbarIcon.IconSource>
+    <tb:TaskbarIcon x:Name="notifyIcon">
+        <!--<tb:TaskbarIcon.IconSource>
             <tb:GeneratedIconSource
             Text="❤️"
             Foreground="Red"
             />
-        </tb:TaskbarIcon.IconSource>
+        </tb:TaskbarIcon.IconSource>-->
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="False">
                 <MenuFlyoutItem

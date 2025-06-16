@@ -45,6 +45,7 @@ public partial class App : Application
 
     public static Window TaskTrayWindow { get; } = new TaskTrayWindow();
     public static WindowEx MainWindow { get; } = new MainWindow();
+    // public static System.Drawing.Icon Icon { get; private set; }
 
     public static bool HandleClosedEvents { get; set; } = true;
 
