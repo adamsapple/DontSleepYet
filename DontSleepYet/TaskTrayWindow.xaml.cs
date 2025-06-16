@@ -36,6 +36,15 @@ public sealed partial class TaskTrayWindow : Window
         ShowWindowCommand = new RelayCommand(ShowWindow);
 
         notifyIcon.DoubleClickCommand = ShowWindowCommand;
+
+        /// 
+        Closed += (s, e) =>
+        {
+            if (!App.HandleClosedEvents)
+            {
+                notifyIcon.Dispose();
+            }
+        };        
     }
 
     public ICommand ExitApplicationCommand { get; }
@@ -51,7 +60,7 @@ public sealed partial class TaskTrayWindow : Window
         }
 
         App.HandleClosedEvents = false;
-        notifyIcon.Dispose();
+        
         app.CloseWindow();
         app.Exit();
     }
