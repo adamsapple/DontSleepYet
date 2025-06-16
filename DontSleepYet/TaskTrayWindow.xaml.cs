@@ -42,18 +42,13 @@ public sealed partial class TaskTrayWindow : Window
     public ICommand ShowHideWindowCommand { get; }
     public ICommand ShowWindowCommand   { get; }
 
-    private async void Exit()
+    private void Exit()
     {
         var app = Application.Current as App;
         if (app == null)
         {
             return;
         }
-
-        var localSettingsService = App.GetService<ILocalSettingsService>();
-        var pos = App.MainWindow.AppWindow.Position;
-        await localSettingsService.SaveSettingAsync("WindowPosition.X", pos.X);
-        await localSettingsService.SaveSettingAsync("WindowPosition.Y", pos.Y);
 
         App.HandleClosedEvents = false;
         notifyIcon.Dispose();

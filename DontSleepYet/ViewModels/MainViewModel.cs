@@ -97,18 +97,18 @@ public partial class MainViewModel : ObservableRecipient
     }
 
 
-    [RelayCommand]
-    private async Task SaveWindowPosition()
-    {
-        var window = App.MainWindow;
-        if (window == null)
-        {
-            return;
-        }
-        // Save the current position and size of the window
-        await localSettingsService.SaveSettingAsync("WindowPosition.Left", window.AppWindow.Position.X);
-        await localSettingsService.SaveSettingAsync("WindowPosition.Left", window.AppWindow.Position.Y);
-    }
+    //[RelayCommand]
+    //private async Task SaveWindowPosition()
+    //{
+    //    var window = App.MainWindow;
+    //    if (window == null)
+    //    {
+    //        return;
+    //    }
+    //    // Save the current position and size of the window
+    //    await localSettingsService.SaveSettingAsync("WindowPosition.X", window.AppWindow.Position.X);
+    //    await localSettingsService.SaveSettingAsync("WindowPosition.Y", window.AppWindow.Position.Y);
+    //}
 
     /// <summary>
     /// CPU使用率

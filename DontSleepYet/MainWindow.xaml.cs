@@ -46,24 +46,24 @@ public sealed partial class MainWindow : WindowEx
         });
     }
 
-    private bool restoredWindowPosition = false;
-    private async void WindowEx_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        if(args.WindowActivationState == WindowActivationState.CodeActivated && !restoredWindowPosition)
-        {
-            PointInt32 pos = new PointInt32
-            {
-                X = await localSettingsService.ReadSettingAsync<int>("WindowPosition.X"),
-                Y = await localSettingsService.ReadSettingAsync<int>("WindowPosition.Y")
-            };
+    //private bool restoredWindowPosition = false;
+    //private async void WindowEx_Activated(object sender, WindowActivatedEventArgs args)
+    //{
+    //    if(args.WindowActivationState == WindowActivationState.CodeActivated && !restoredWindowPosition)
+    //    {
+    //        //PointInt32 pos = new PointInt32
+    //        //{
+    //        //    X = await localSettingsService.ReadSettingAsync<int>("WindowPosition.X"),
+    //        //    Y = await localSettingsService.ReadSettingAsync<int>("WindowPosition.Y")
+    //        //};
 
-            AppWindow.Move(pos);
+    //        var pos = await localSettingsService.ReadSettingAsync<PointInt32>("WindowPosition.Pos");
 
-            restoredWindowPosition = true;
-        }
+    //        //AppWindow.Move(pos);
 
-    }
-
+    //        restoredWindowPosition = true;
+    //    }
+    //}
 
     //private void WindowEx_Closed(object sender, WindowEventArgs args)
     //{

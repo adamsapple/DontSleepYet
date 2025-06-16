@@ -1,4 +1,6 @@
-﻿using DontSleepYet.Activation;
+﻿using System.Diagnostics;
+using CommunityToolkit.Common;
+using DontSleepYet.Activation;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Core.Contracts.Services;
 using DontSleepYet.Core.Services;
@@ -11,7 +13,9 @@ using DontSleepYet.Views;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.UI.Composition.Diagnostics;
 using Microsoft.UI.Xaml;
+using Windows.Graphics;
 
 namespace DontSleepYet;
 
@@ -45,6 +49,8 @@ public partial class App : Application
     public static bool HandleClosedEvents { get; set; } = true;
 
     public static UIElement? AppTitlebar { get; set; }
+
+    private ILocalSettingsService localSettingsService;
 
     public App()
     {
@@ -109,8 +115,51 @@ public partial class App : Application
 
         await App.GetService<IActivationService>().ActivateAsync(args);
 
+#if !DEBUG
+        MainWindow.Hide();
+#endif
+        await MainWindowSetting();
+
+        //#if !DEBUG
+        TaskTrayWindow.Activate();
+        TaskTrayWindow.Hide();
+        //#endif
+    }
+
+    private bool WindowPositionSettingCalled = false;
+
+    /// <summary>
+    /// - MainWindowの位置を復元する
+    /// - 終了時にMainWindowの位置を保存する
+    /// - Windowのクローズボタン押下時は、MainWindowを隠すだけにする設定を付与
+    /// </summary>
+    /// <returns></returns>
+    private async Task MainWindowSetting()
+    {
+        if (WindowPositionSettingCalled)
+        {
+            return;
+        }
+
+        localSettingsService = App.GetService<ILocalSettingsService>();
+        /// MainWindowの位置を復元する
+        {
+            var pos = await localSettingsService.ReadSettingAsync<PointInt32>("WindowPosition.Pos");
+            MainWindow.AppWindow.Move(pos);
+        }
+
         MainWindow.Closed += (sender, args) =>
         {
+            /// Save the position of the MainWindow when it is closed
+            {
+                var pos = MainWindow.AppWindow.Position;
+                //Debug.WriteLine($"MainWindow closed. Position: {pos.X}, {pos.Y}");
+
+                //var localSettingsService = App.GetService<ILocalSettingsService>();
+                localSettingsService.SaveSettingAsync("WindowPosition.Pos", pos).GetResultOrDefault();
+            }
+
+            /// Windowのクローズボタン押下時は、MainWindowを隠すだけにする
             if (HandleClosedEvents)
             {
                 args.Handled = true;
@@ -118,11 +167,7 @@ public partial class App : Application
             }
         };
 
-        //#if !DEBUG
-        MainWindow.Hide();
-        TaskTrayWindow.Activate();
-        TaskTrayWindow.Hide();
-//#endif
+        WindowPositionSettingCalled = true;
     }
 
     public void CloseWindow()
