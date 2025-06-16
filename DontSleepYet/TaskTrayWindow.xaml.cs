@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using DontSleepYet.Contracts.Services;
 using H.NotifyIcon.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -41,13 +42,18 @@ public sealed partial class TaskTrayWindow : Window
     public ICommand ShowHideWindowCommand { get; }
     public ICommand ShowWindowCommand   { get; }
 
-    private void Exit()
+    private async void Exit()
     {
         var app = Application.Current as App;
         if (app == null)
         {
             return;
         }
+
+        var localSettingsService = App.GetService<ILocalSettingsService>();
+        var pos = App.MainWindow.AppWindow.Position;
+        await localSettingsService.SaveSettingAsync("WindowPosition.X", pos.X);
+        await localSettingsService.SaveSettingAsync("WindowPosition.Y", pos.Y);
 
         App.HandleClosedEvents = false;
         notifyIcon.Dispose();

@@ -18,6 +18,7 @@
     Title="asdfasdfasfd"
     PersistenceId="MainWindow"
     mc:Ignorable="d"
+    Activated="WindowEx_Activated"
     >
     <Window.SystemBackdrop>
         <MicaBackdrop/>
