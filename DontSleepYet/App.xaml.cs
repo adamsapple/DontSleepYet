@@ -172,7 +172,7 @@ public partial class App : Application
 
     public void CloseWindow()
     {
-        MainWindow.Close();
         TaskTrayWindow.Close();
+        MainWindow.Close();
     }
 }
