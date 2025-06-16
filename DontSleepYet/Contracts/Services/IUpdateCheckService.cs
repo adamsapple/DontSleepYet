@@ -9,6 +9,9 @@ namespace DontSleepYet.Contracts.Services;
 public interface IUpdateCheckService
 {
     Task<UpdateCheckData> CheckUpdateAsync();
+    DateTime LastCheckedAt { get; }
+    DateTime NextCheckAt { get; }
+    TimeSpan CheckPeriod { get; set; }
 }
 
 public class UpdateCheckData
