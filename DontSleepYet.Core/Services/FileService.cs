@@ -20,6 +20,8 @@ public class FileService : IFileService
         return default;
     }
 
+    private Mutex mut = new Mutex();
+
     public void Save<T>(string folderPath, string fileName, T content)
     {
         if (!Directory.Exists(folderPath))
@@ -27,8 +29,12 @@ public class FileService : IFileService
             Directory.CreateDirectory(folderPath);
         }
 
+        mut.WaitOne();
+
         var fileContent = JsonConvert.SerializeObject(content);
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
+        
+        mut.ReleaseMutex();
     }
 
     public void Delete(string folderPath, string fileName)
