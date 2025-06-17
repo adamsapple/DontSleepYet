@@ -54,6 +54,7 @@ public class GithubUpdateCheckService : IUpdateCheckService
         var isUpdateAvailable = false;
         var latestVersion = string.Empty;
         var description = string.Empty;
+        var publishedAt = DateTime.MinValue;
         Uri infoUrl = null;
 
         {
@@ -67,14 +68,16 @@ public class GithubUpdateCheckService : IUpdateCheckService
                 latestVersion = release.LatestVersion;
                 description 　= release.Body ?? string.Empty;
                 infoUrl 　　　= new Uri(release.HtmlUrl ?? string.Empty);
+                publishedAt 　= release.PublishedAt.LocalDateTime;
                 isUpdateAvailable = true;
             }
         }
 
-        var result = new UpdateCheckData(isCheckSuccess: isCheckSuccess, 
-                            isUpdateAvailable: isUpdateAvailable, 
-                            latestVersion: latestVersion, 
-                            description: description, 
+        var result = new UpdateCheckData(isCheckSuccess: isCheckSuccess,
+                            isUpdateAvailable: isUpdateAvailable,
+                            latestVersion: latestVersion,
+                            publishedAt: publishedAt,
+                            description: description,
                             infoUrl: infoUrl);        
 
         return result;

@@ -48,7 +48,31 @@ public class LocalSettingsService : ILocalSettingsService
         }
     }
 
-    public async Task<T?> ReadSettingAsync<T>(string key)
+    //public async Task<T?> ReadSettingAsync<T>(string key)
+    //{
+    //    //if (RuntimeHelper.IsMSIX)
+    //    //{
+    //    //    if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
+    //    //    {
+    //    //        return await Json.ToObjectAsync<T>((string)obj);
+    //    //    }
+    //    //}
+    //    //else
+    //    //{
+    //    //    await InitializeAsync();
+
+    //    //    if (_settings != null && _settings.TryGetValue(key, out var obj))
+    //    //    {
+    //    //        return await Json.ToObjectAsync<T>((string)obj);
+    //    //    }
+    //    //}
+    //    //
+    //    //return default;
+
+    //    return await ReadSettingAsync<T?>(key, default);
+    //}
+
+    public async Task<T?> ReadSettingAsync<T>(string key, T? defaultValue = default)
     {
         if (RuntimeHelper.IsMSIX)
         {
@@ -67,7 +91,7 @@ public class LocalSettingsService : ILocalSettingsService
             }
         }
 
-        return default;
+        return defaultValue;
     }
 
     public async Task SaveSettingAsync<T>(string key, T value)

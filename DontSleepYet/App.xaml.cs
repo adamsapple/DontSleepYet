@@ -76,6 +76,7 @@ public partial class App : Application
             services.AddSingleton<IDontSleepService, DontSleepService>();
             services.AddSingleton<ISystemInfoLiteService, SystemInfoLiteService>();
             services.AddSingleton<IUpdateCheckService, GithubUpdateCheckService>();
+            services.AddSingleton<IUpdateNotificationService, UpdateNotificationService>();
 
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
@@ -114,11 +115,9 @@ public partial class App : Application
         base.OnLaunched(args);
 
         /// show Toast notification.
-        // App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+        //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
         await App.GetService<IActivationService>().ActivateAsync(args);
-
-        var update = await App.GetService<IUpdateCheckService>().CheckUpdateAsync();
 
 #if !DEBUG
         MainWindow.Hide();
@@ -129,6 +128,9 @@ public partial class App : Application
         TaskTrayWindow.Activate();
         TaskTrayWindow.Hide();
         //#endif
+
+        /// 更新確認サービスを開始
+        await App.GetService<IUpdateNotificationService>().StartAsync();
     }
 
     private bool WindowPositionSettingCalled = false;
