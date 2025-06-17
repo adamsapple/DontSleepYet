@@ -16,8 +16,18 @@ public interface IUpdateCheckService
 
 public class UpdateCheckData
 {
+    public bool IsCheckSuccess { get; }
     public bool IsUpdateAvailable { get; }
     public string? LatestVersion { get; }
     public string? Description { get; }
-    public Uri? InfoUrl { get; }    
+    public Uri? InfoUrl { get; }
+
+    public UpdateCheckData(bool isCheckSuccess, bool isUpdateAvailable, string? latestVersion, string? description, Uri? infoUrl)
+    {
+        IsCheckSuccess      = isCheckSuccess;
+        IsUpdateAvailable   = isUpdateAvailable;
+        LatestVersion       = latestVersion;
+        Description         = description;
+        InfoUrl             = infoUrl;
+    }
 }

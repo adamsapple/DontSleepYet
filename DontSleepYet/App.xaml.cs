@@ -75,7 +75,8 @@ public partial class App : Application
             services.AddTransient<INavigationViewService, NavigationViewService>();
             services.AddSingleton<IDontSleepService, DontSleepService>();
             services.AddSingleton<ISystemInfoLiteService, SystemInfoLiteService>();
-            
+            services.AddSingleton<IUpdateCheckService, GithubUpdateCheckService>();
+
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -93,6 +94,7 @@ public partial class App : Application
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+            services.Configure<GithubBaseOption>(context.Configuration.GetSection("Github"));
         }).
         Build();
 
@@ -115,6 +117,8 @@ public partial class App : Application
         // App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
         await App.GetService<IActivationService>().ActivateAsync(args);
+
+        var update = await App.GetService<IUpdateCheckService>().CheckUpdateAsync();
 
 #if !DEBUG
         MainWindow.Hide();
