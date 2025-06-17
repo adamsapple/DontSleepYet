@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DontSleepYet.Contracts.Services;
+using DontSleepYet.Helpers;
 using Microsoft.Extensions.Options;
+using Windows.ApplicationModel;
 
 
 namespace DontSleepYet.Services;
@@ -65,11 +68,14 @@ public class GithubUpdateCheckService : IUpdateCheckService
 
             if (!string.IsNullOrEmpty(release?.LatestVersion))
             {
+                var currentVersionObj = GetVersion();
+                var latestVersionObj  = new Version(Regex.Match(release.LatestVersion, "[0-9.]+").Value);
+                
                 latestVersion = release.LatestVersion;
                 description 　= release.Body ?? string.Empty;
                 infoUrl 　　　= new Uri(release.HtmlUrl ?? string.Empty);
                 publishedAt 　= release.PublishedAt.LocalDateTime;
-                isUpdateAvailable = true;
+                isUpdateAvailable = (latestVersionObj > currentVersionObj);
             }
         }
 
@@ -82,12 +88,27 @@ public class GithubUpdateCheckService : IUpdateCheckService
 
         return result;
     }
+
+    private Version GetVersion()
+    {
+        Version version;
+        if (RuntimeHelper.IsMSIX)
+        {
+            var packageVersion = Package.Current.Id.Version;
+            version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+        }
+        else
+        {
+            version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
+        }
+        return version;
+    }
 }
 
 public class GithubBaseOption
 {
-    public string User { get; set; }
-    public string Repository { get; set; }
+    public required string User { get; set; }
+    public required string Repository { get; set; }
 }
 
 class GithubReleaseData
