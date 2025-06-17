@@ -75,7 +75,9 @@ public partial class App : Application
             services.AddTransient<INavigationViewService, NavigationViewService>();
             services.AddSingleton<IDontSleepService, DontSleepService>();
             services.AddSingleton<ISystemInfoLiteService, SystemInfoLiteService>();
-            
+            services.AddSingleton<IUpdateCheckService, GithubUpdateCheckService>();
+            services.AddSingleton<IUpdateNotificationService, UpdateNotificationService>();
+
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -93,6 +95,7 @@ public partial class App : Application
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+            services.Configure<GithubBaseOption>(context.Configuration.GetSection("Github"));
         }).
         Build();
 
@@ -112,7 +115,7 @@ public partial class App : Application
         base.OnLaunched(args);
 
         /// show Toast notification.
-        // App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+        //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
         await App.GetService<IActivationService>().ActivateAsync(args);
 
@@ -125,6 +128,9 @@ public partial class App : Application
         TaskTrayWindow.Activate();
         TaskTrayWindow.Hide();
         //#endif
+
+        /// 更新確認サービスを開始
+        await App.GetService<IUpdateNotificationService>().StartAsync();
     }
 
     private bool WindowPositionSettingCalled = false;
