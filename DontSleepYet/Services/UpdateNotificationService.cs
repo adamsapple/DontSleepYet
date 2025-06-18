@@ -122,7 +122,9 @@ public class UpdateNotificationService : IUpdateNotificationService
             return;
         }
 
-        // await localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", DateTime.MinValue); // test code/
+#if DEBUG
+        await localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", DateTime.MinValue); // test code/
+#endif
 
         LastCheckedAt     = await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
         CheckPeriod       = await localSettingsService.ReadSettingAsync<TimeSpan>("UpdateCheck.CheckPeriod", TimeSpan.FromDays(1));
