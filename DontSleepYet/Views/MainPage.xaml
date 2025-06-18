@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ctc="using:CommunityToolkit.WinUI.Controls"
     xmlns:converter="using:CommunityToolkit.WinUI.Converters"
+    xmlns:helpers="using:DontSleepYet.Helpers"
     xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
@@ -13,6 +14,7 @@
     >
     <Page.Resources>
         <converter:StringFormatConverter x:Key="FormatStringConverter" />
+        <helpers:UsageToColorConverter x:Key="UsageToColorConverter" />
     </Page.Resources>
     
     <Grid x:Name="ContentArea">
@@ -29,6 +31,7 @@
                 <Grid HorizontalAlignment="Left" Padding="4">
                     <ctc:RadialGauge x:Name="RadialGaugeCpu"
                                      Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}"
+                                     TrailBrush="{x:Bind ViewModel.CpuUsage, Converter={StaticResource UsageToColorConverter}, Mode=OneWay}"
                                      Width="120"
                                      Minimum="0"
                                      Maximum="1"
@@ -53,6 +56,7 @@
                 <Grid HorizontalAlignment="Left" Padding="4">
                     <ctc:RadialGauge x:Name="RadialGaugePhisicalMemory"
                                      Value="{x:Bind ViewModel.MemUsage, Mode=OneWay}"
+                                     TrailBrush="{x:Bind ViewModel.MemUsage, Converter={StaticResource UsageToColorConverter}, Mode=OneWay}"
                                      Width="120"
                                      Minimum="0"
                                      Maximum="1"
