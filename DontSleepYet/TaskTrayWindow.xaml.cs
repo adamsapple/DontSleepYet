@@ -91,6 +91,8 @@ public sealed partial class TaskTrayWindow : Window
         else
         {
             window.Show();
+            window.SetForegroundWindow();
+            window.Activate();
         }
     }
 
@@ -106,6 +108,8 @@ public sealed partial class TaskTrayWindow : Window
         {
             window.Show();
         }
-    }
 
+        window.SetForegroundWindow();
+        window.Activate();
+    }
 }
