@@ -17,7 +17,9 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <tb:TaskbarIcon x:Name="notifyIcon">
+    <tb:TaskbarIcon x:Name="notifyIcon"
+                    x:Uid="notifyIcon"
+                    >
         <!--<tb:TaskbarIcon.IconSource>
             <tb:GeneratedIconSource
             Text="❤️"
