@@ -134,9 +134,23 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
 
     public async Task StartAsync()
     {
+        if (_timer.Enabled)
+        {
+            return;
+        }
+
+        await InitializeAsync();
+
+        _timer.Start();
     }
 
     public void Stop() 
     {
+        if (!_timer.Enabled)
+        {
+            return;
+        }
+
+        _timer.Stop();
     }
 }

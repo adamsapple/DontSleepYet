@@ -17,6 +17,7 @@
     <WindowsPackageType>None</WindowsPackageType>
     <VersionPrefix>0.0.2</VersionPrefix>
     <VersionSuffix>alpha</VersionSuffix>
+    <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="TaskTrayWindow.xaml" />

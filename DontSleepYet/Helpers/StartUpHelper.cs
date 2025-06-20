@@ -11,7 +11,7 @@ public static class StartUpHelper
     //
     // スタートアップにショートカットを登録する
     //
-    public static void RegiserStartUp_CurrentUserRun(string title = null)
+    public static void RegiserStartUp_CurrentUserRun(string? title = null)
     {
         //var path = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
         //var filename = Path.GetFileName(Application.ExecutablePath);
@@ -20,10 +20,7 @@ public static class StartUpHelper
         var executablePath = Environment.ProcessPath!;
         
 
-        if (title == null)
-        {
-            title = Path.GetFileNameWithoutExtension(executablePath);
-        }
+        title ??= Path.GetFileNameWithoutExtension(executablePath);
 
         var path = GetStartupShortcutPath(title);
 
@@ -33,7 +30,7 @@ public static class StartUpHelper
     //
     // スタートアップからショートカットを削除する
     //
-    public static void UnregiserStartUp_CurrentUserRun(string title = null)
+    public static void UnregiserStartUp_CurrentUserRun(string? title = null)
     {
         if (title == null)
         {
@@ -45,7 +42,7 @@ public static class StartUpHelper
         File.Delete(path);
     }
 
-    public static bool ExistsStartUp_CurrentUserRun(string title = null)
+    public static bool ExistsStartUp_CurrentUserRun(string? title = null)
     {
         if (title == null)
         {
@@ -73,8 +70,8 @@ public static class StartUpHelper
         //string targetPath = Application.ExecutablePath;
 
         //WshShellを作成
-        var t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8"));
-        dynamic shell = Activator.CreateInstance(t);
+        var t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8"))!;
+        dynamic shell = Activator.CreateInstance(t)!;
         //WshShortcutを作成
         var shortcut = shell.CreateShortcut(target);
 

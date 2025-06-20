@@ -33,7 +33,7 @@ public class GithubUpdateCheckService : IUpdateCheckService
         set => throw new NotImplementedException();
     }
 
-    private GithubBaseOption baseOption;
+    private readonly GithubBaseOption baseOption;
 
     public GithubUpdateCheckService(IOptions<GithubBaseOption> baseOption)
     {
@@ -58,12 +58,12 @@ public class GithubUpdateCheckService : IUpdateCheckService
         var latestVersion = string.Empty;
         var description = string.Empty;
         var publishedAt = DateTime.MinValue;
-        Uri infoUrl = null;
+        Uri? infoUrl = null;
 
         {
             var release = JsonSerializer.Deserialize<GithubReleaseData>(
                                 await response.Content.ReadAsStringAsync(),
-                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true,  }
            　                );
 
             if (!string.IsNullOrEmpty(release?.LatestVersion))

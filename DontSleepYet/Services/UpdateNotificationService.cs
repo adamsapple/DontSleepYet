@@ -13,9 +13,9 @@ namespace DontSleepYet.Services;
 public class UpdateNotificationService : IUpdateNotificationService
 {
 #region Services.
-    private IUpdateCheckService updateCheckService;
-    private ILocalSettingsService localSettingsService;
-    private IAppNotificationService appNotificationService;
+    private readonly IUpdateCheckService updateCheckService;
+    private readonly ILocalSettingsService localSettingsService;
+    private readonly IAppNotificationService appNotificationService;
 #endregion Services.
 
     private readonly DispatcherQueue dispatcherQueue;
@@ -67,14 +67,14 @@ public class UpdateNotificationService : IUpdateNotificationService
                     await Task.Delay(TimeSpan.FromHours(1), cts.Token);
                 }
             }
-        }catch (OperationCanceledException e)
+        }catch (OperationCanceledException)
         {
             // Handle cancellation gracefully
-            Debug.WriteLine("Update check service was cancelled.");
+            //Debug.WriteLine("Update check service was cancelled.");
         }
         finally
         {
-            cts.Dispose();
+            cts?.Dispose();
             cts = null;
             isStarting = false;
         }
