@@ -61,7 +61,7 @@ public class UpdateNotificationService : IUpdateNotificationService
                     break;
                 }
 
-                if(!await CheckAndNotificationAsyncInternal())
+                if(!await CheckAndNotificationInternalAsync())
                 {
                     /// チェック失敗時は、1時間待機してみる
                     await Task.Delay(TimeSpan.FromHours(1), cts.Token);
@@ -94,7 +94,12 @@ public class UpdateNotificationService : IUpdateNotificationService
         return;
     }
 
-    private async Task<bool> CheckAndNotificationAsyncInternal(bool isServiceUse = false)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isServiceUse"></param>
+    /// <returns></returns>
+    private async Task<bool> CheckAndNotificationInternalAsync(bool isServiceUse = false)
     {
         var updateCheckData = await updateCheckService.CheckUpdateAsync();
 
@@ -128,7 +133,7 @@ public class UpdateNotificationService : IUpdateNotificationService
 
     public async Task CheckAndNotificationAsync()
     {
-        await CheckAndNotificationAsyncInternal(true);
+        await CheckAndNotificationInternalAsync(true);
     }
 
     public void IgnoreThisVersion()
