@@ -89,8 +89,10 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
         var kernel = cpuUsage.KernelTime - prevCpuReport.KernelTime;
         var user   = cpuUsage.UserTime - prevCpuReport.UserTime;
         var idle   = cpuUsage.IdleTime - prevCpuReport.IdleTime;
-        var kpu    = kernel + user;
-        
+
+        kernel -= idle;  // 値がバグってそう。kernelにidleが含まれている可能性を疑う。
+
+        var use    = kernel + user;
         var total  = kernel + user + idle;
 
         //Debug.WriteLine($"kernel: {kernel.TotalSeconds}");
@@ -104,9 +106,9 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
         //var result = 0.45f;
 
         /// CPU使用率を計算する：各値の使い方がよくわかってないが、こんな気がする
-        if (kpu.TotalSeconds != 0)
+        if (total.TotalSeconds != 0)
         {
-            var cpu_usage = (kpu.TotalSeconds - idle.TotalSeconds) / kpu.TotalSeconds;
+            var cpu_usage = use.TotalSeconds / total.TotalSeconds;
 
             var mem_usage = 1.0 - (memUsage.AvailableSizeInBytes * 1.0 / memUsage.TotalPhysicalSizeInBytes);
 
