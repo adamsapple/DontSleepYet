@@ -51,7 +51,7 @@ public partial class App : Application
 
     public static UIElement? AppTitlebar { get; set; }
 
-    private ILocalSettingsService localSettingsService;
+    private readonly ILocalSettingsService localSettingsService;
 
     public App()
     {
@@ -100,6 +100,7 @@ public partial class App : Application
         Build();
 
         App.GetService<IAppNotificationService>().Initialize();
+        localSettingsService = App.GetService<ILocalSettingsService>();
 
         UnhandledException += App_UnhandledException;
     }
@@ -148,7 +149,6 @@ public partial class App : Application
             return;
         }
 
-        localSettingsService = App.GetService<ILocalSettingsService>();
         /// MainWindowの位置を復元する
         {
             var pos = await localSettingsService.ReadSettingAsync<PointInt32>("WindowPosition.Pos");
