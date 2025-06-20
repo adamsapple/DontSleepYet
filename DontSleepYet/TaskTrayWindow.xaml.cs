@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
+using DontSleepYet.Services;
 using H.NotifyIcon.Core;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -43,8 +44,9 @@ public sealed partial class TaskTrayWindow : Window
         }
 
         ExitApplicationCommand = new RelayCommand(Exit);
-        ShowHideWindowCommand = new RelayCommand(ShowHideWindow);
-        ShowWindowCommand = new RelayCommand(ShowWindow);
+        ShowHideWindowCommand  = new RelayCommand(ShowHideWindow);
+        ShowWindowCommand      = new RelayCommand(ShowWindow);
+        UpdateCheckCommand     = new RelayCommand(UpdateCheckAsync);
 
         notifyIcon.DoubleClickCommand = ShowWindowCommand;
 
@@ -61,6 +63,7 @@ public sealed partial class TaskTrayWindow : Window
     public ICommand ExitApplicationCommand { get; }
     public ICommand ShowHideWindowCommand { get; }
     public ICommand ShowWindowCommand   { get; }
+    public ICommand UpdateCheckCommand { get; }
 
     private void Exit()
     {
@@ -111,5 +114,13 @@ public sealed partial class TaskTrayWindow : Window
 
         window.SetForegroundWindow();
         window.Activate();
+    }
+
+    private async void UpdateCheckAsync()
+    {
+        var updateNotificationService = App.GetService<IUpdateNotificationService>();
+        await updateNotificationService.StopAsync();
+        await updateNotificationService.CheckAndNotificationAsync();
+        await updateNotificationService.StartAsync();
     }
 }

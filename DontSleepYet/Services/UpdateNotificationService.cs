@@ -36,57 +36,99 @@ public class UpdateNotificationService : IUpdateNotificationService
         }
 
         IsEnable = true;
-        cts = new CancellationTokenSource();
+        isStarting = true;
 
-        await InitializeAsync();
-
-        while (IsEnable)
+        try
         {
-            var now = DateTime.Now;
-            var duration = CheckPeriod - (now - LastCheckedAt);
+            cts = new CancellationTokenSource();
+            var ct = cts.Token;
+            ct.ThrowIfCancellationRequested();
 
-            if(duration.TotalSeconds > 0)
+            await InitializeAsync();
+
+            while (IsEnable)
             {
-                await Task.Delay(duration, cts.Token);
-            }
+                var now = DateTime.Now;
+                var duration = CheckPeriod - (now - LastCheckedAt);
 
-            if (!IsEnable)
-            {
-                break;
-            }
-
-            var updateCheckData = await updateCheckService.CheckUpdateAsync();
-
-            if (updateCheckData.IsCheckSuccess)
-            {
-                LastCheckedAt = now;
-
-                if(updateCheckData.IsUpdateAvailable
-                   && ignorePublishedAt < updateCheckData.PublishedAt)
+                if (duration.TotalSeconds > 0)
                 {
-                    Debug.WriteLine($"Update available: {updateCheckData.LatestVersion}");
-                    Debug.WriteLine($"More info: {updateCheckData.InfoUrl}");
-
-                    ShowNotification(string.Format("UpdateNotificationPayload".GetLocalized(), updateCheckData.InfoUrl, updateCheckData.LatestVersion));
+                    await Task.Delay(duration, ct);
                 }
 
-                latestCheckData = updateCheckData;
-            }
-            else
-            {
-                /// チェック失敗時は、1時間待機してみる
-                await Task.Delay(TimeSpan.FromHours(1), cts.Token);
-            }
-        }
+                if (!IsEnable)
+                {
+                    break;
+                }
 
-        cts.Dispose();
-        cts = null;
+                if(!await CheckAndNotificationAsyncInternal())
+                {
+                    /// チェック失敗時は、1時間待機してみる
+                    await Task.Delay(TimeSpan.FromHours(1), cts.Token);
+                }
+            }
+        }catch (OperationCanceledException e)
+        {
+            // Handle cancellation gracefully
+            Debug.WriteLine("Update check service was cancelled.");
+        }
+        finally
+        {
+            cts.Dispose();
+            cts = null;
+            isStarting = false;
+        }
     }
 
-    public void Stop()
+    public async Task StopAsync()
     {
         IsEnable = false;
         cts?.Cancel();
+
+        while (isStarting)
+        {
+            // Wait until the service is not starting
+            await Task.Delay(100);
+        }
+
+        return;
+    }
+
+    private async Task<bool> CheckAndNotificationAsyncInternal(bool isServiceUse = false)
+    {
+        var updateCheckData = await updateCheckService.CheckUpdateAsync();
+
+        if (!updateCheckData.IsCheckSuccess)
+        {
+            return updateCheckData.IsCheckSuccess;
+        }
+
+        LastCheckedAt = DateTime.Now;
+
+        if (updateCheckData.IsUpdateAvailable
+            && ignorePublishedAt < updateCheckData.PublishedAt)
+        {
+            Debug.WriteLine($"Update available: {updateCheckData.LatestVersion}");
+            Debug.WriteLine($"More info: {updateCheckData.InfoUrl}");
+
+            ShowNotification(string.Format("UpdateNotificationPayload".GetLocalized(), updateCheckData.InfoUrl, updateCheckData.LatestVersion));
+        }
+        else if(isServiceUse)
+        {
+            Debug.WriteLine($"not Update.:");
+            Debug.WriteLine($"More info: {updateCheckData.InfoUrl}");
+
+            ShowNotification(string.Format("NotUpdateNotificationPayload".GetLocalized(), updateCheckData.LatestVersion));
+        }
+
+        latestCheckData = updateCheckData;
+        
+        return updateCheckData.IsCheckSuccess;
+    }
+
+    public async Task CheckAndNotificationAsync()
+    {
+        await CheckAndNotificationAsyncInternal(true);
     }
 
     public void IgnoreThisVersion()
@@ -111,7 +153,7 @@ public class UpdateNotificationService : IUpdateNotificationService
 
     public void TestShow()
     {
-        var payload = string.Format("UpdateNotificationPayload".GetLocalized(), "https://www.google.com");
+        var payload = string.Format("NotUpdateNotificationPayload".GetLocalized());
         ShowNotification(payload);
     }
 
@@ -138,6 +180,7 @@ public class UpdateNotificationService : IUpdateNotificationService
     public bool IsEnable { get; private set; } = false;
 
     private bool isInitialized = false;
+    private bool isStarting = false;
 
     private DateTime _lastCheckedAt = DateTime.MinValue;
     public DateTime LastCheckedAt {

@@ -32,6 +32,10 @@
                     Text="Show/Hide Window"
                     Command="{x:Bind ShowHideWindowCommand}"
                     />
+                <MenuFlyoutItem
+                    x:Uid="UpdateCheckMenuItem"
+                    Command="{x:Bind UpdateCheckCommand}"
+                    />
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     Text="Exit"

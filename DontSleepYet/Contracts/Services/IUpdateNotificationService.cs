@@ -8,7 +8,8 @@ namespace DontSleepYet.Contracts.Services;
 public interface IUpdateNotificationService
 {
     Task StartAsync();
+    Task StopAsync();
     void IgnoreThisVersion();
-
+    Task CheckAndNotificationAsync();
     void TestShow();
 }
