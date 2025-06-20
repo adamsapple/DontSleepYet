@@ -117,12 +117,13 @@ public partial class App : Application
         /// show Toast notification.
         //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
+        await MainWindowSetting();
+
         await App.GetService<IActivationService>().ActivateAsync(args);
 
 #if !DEBUG
         MainWindow.Hide();
 #endif
-        await MainWindowSetting();
 
         /// 更新確認サービスを開始
         await App.GetService<IUpdateNotificationService>().StartAsync();
