@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:DontSleepYet.Helpers"
     xmlns:behaviors="using:DontSleepYet.Behaviors"
+    xmlns:views="using:DontSleepYet.Views"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     Loaded="OnLoaded">
 
@@ -93,5 +94,6 @@
                 <Frame x:Name="NavigationFrame" />
             </Grid>
         </NavigationView>
+        <views:TrayIconView x:Name="TrayIconView" />
     </Grid>
 </Page>

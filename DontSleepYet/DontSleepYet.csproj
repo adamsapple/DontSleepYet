@@ -20,7 +20,7 @@
     <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="TaskTrayWindow.xaml" />
+    <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\StoreLogo.png" />
@@ -54,7 +54,7 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="TaskTrayWindow.xaml">
+    <Page Update="Views\TrayIconView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

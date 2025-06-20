@@ -6,9 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
-using DontSleepYet.Services;
-using H.NotifyIcon.Core;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,18 +15,15 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.ViewManagement;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace DontSleepYet;
-/// <summary>
-/// An empty window that can be used on its own or navigated to within a Frame.
-/// </summary>
-public sealed partial class TaskTrayWindow : Window
+namespace DontSleepYet.Views;
+
+public sealed partial class TrayIconView : UserControl
 {
-    public TaskTrayWindow()
+    public TrayIconView()
     {
         InitializeComponent();
 
@@ -44,25 +38,16 @@ public sealed partial class TaskTrayWindow : Window
         }
 
         ExitApplicationCommand = new RelayCommand(Exit);
-        ShowHideWindowCommand  = new RelayCommand(ShowHideWindow);
-        ShowWindowCommand      = new RelayCommand(ShowWindow);
-        UpdateCheckCommand     = new RelayCommand(UpdateCheckAsync);
+        ShowHideWindowCommand = new RelayCommand(ShowHideWindow);
+        ShowWindowCommand = new RelayCommand(ShowWindow);
+        UpdateCheckCommand = new RelayCommand(UpdateCheckAsync);
 
-        notifyIcon.DoubleClickCommand = ShowWindowCommand;
-
-        /// 
-        Closed += (s, e) =>
-        {
-            if (!App.HandleClosedEvents)
-            {
-                notifyIcon.Dispose();
-            }
-        };        
+        notifyIcon.DoubleClickCommand = ShowWindowCommand;        
     }
 
     public ICommand ExitApplicationCommand { get; }
     public ICommand ShowHideWindowCommand { get; }
-    public ICommand ShowWindowCommand   { get; }
+    public ICommand ShowWindowCommand { get; }
     public ICommand UpdateCheckCommand { get; }
 
     private void Exit()
@@ -76,6 +61,7 @@ public sealed partial class TaskTrayWindow : Window
         App.HandleClosedEvents = false;
         
         app.CloseWindow();
+        notifyIcon.Dispose();
         app.Exit();
     }
 
@@ -118,9 +104,10 @@ public sealed partial class TaskTrayWindow : Window
 
     private async void UpdateCheckAsync()
     {
-        var updateNotificationService = App.GetService<IUpdateNotificationService>();
+        var updateNotificationService = App.GetService<IUpdateNotificationService>()!;
         await updateNotificationService.StopAsync();
         await updateNotificationService.CheckAndNotificationAsync();
         await updateNotificationService.StartAsync();
     }
+
 }
