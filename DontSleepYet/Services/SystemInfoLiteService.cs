@@ -129,9 +129,6 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
         //Debug.WriteLine($"k+u   : {(kernel + user).TotalSeconds}");
         //Debug.WriteLine($"i+u   : {(idle + user).TotalSeconds}");
         //Debug.WriteLine($"total : {total.TotalSeconds}");
-
-
-
     }
 
     public async Task StartAsync()

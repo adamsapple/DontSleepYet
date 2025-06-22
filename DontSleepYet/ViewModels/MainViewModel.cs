@@ -78,6 +78,9 @@ public partial class MainViewModel : ObservableRecipient
     [ObservableProperty]
     private double _memUsage = 0.0;
 
+    [ObservableProperty]
+    private DateTime _updateCheckedAt = DateTime.MinValue;
+
     private bool isInitialized = false;
     /// <summary>
     /// 
@@ -144,13 +147,18 @@ public partial class MainViewModel : ObservableRecipient
 
     private void SystemInfoLiteService_OnSystemInfoUpdated(float cpuUsage, float memUsage)
     {
-        
+        var dateTime = Task.Run(async () =>
+        {
+            return await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
+        }).Result;
 
         //var dispatcherQueue = App.GetService<Window>().DispatcherQueue;
         dispatcherQueue.TryEnqueue(() =>
             {
                 CpuUsage = cpuUsage;
                 MemUsage = memUsage;
+
+                UpdateCheckedAt = dateTime;
             });
     }
 }
