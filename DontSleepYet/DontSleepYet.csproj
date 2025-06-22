@@ -65,7 +65,7 @@
 
   <PropertyGroup Label="Globals">
     <WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
-    <AssemblyVersion>0.0.2.3</AssemblyVersion>
+    <AssemblyVersion>0.0.2.4</AssemblyVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

@@ -79,7 +79,7 @@ public partial class MainViewModel : ObservableRecipient
     private double _memUsage = 0.0;
 
     [ObservableProperty]
-    private DateTime _updateCheckedAt = DateTime.MinValue;
+    private DateTime? _updateCheckedAt = null;
 
     private bool isInitialized = false;
     /// <summary>
