@@ -81,12 +81,13 @@ public class DontSleepService : IDontSleepService
     {
         /// 作戦1: マウスカーソルを(0, 0)移動する
         {
-            //System.Drawing.Point cursorPos;
-            //Windows.Win32.PInvoke.GetCursorPos(out cursorPos);
-            //Windows.Win32.PInvoke.SetCursorPos(cursorPos.X-10, cursorPos.Y); // Move the cursor to (0, 0) to prevent sleep   
-        }
+            System.Drawing.Point cursorPos;
+            Windows.Win32.PInvoke.GetCursorPos(out cursorPos);
+            Windows.Win32.PInvoke.SetCursorPos(cursorPos.X-1, cursorPos.Y); // Move the cursor to (0, 0) to prevent sleep
+            Windows.Win32.PInvoke.SetCursorPos(cursorPos.X, cursorPos.Y);   // Move the cursor to (0, 0) to prevent sleep
+        }//*/
 
-        /// 作戦2: F15キーを押下する
+        /*// 作戦2: F15キーを押下する
         {
             Span<INPUT> inputs = stackalloc INPUT[2];
 
@@ -98,7 +99,7 @@ public class DontSleepService : IDontSleepService
             inputs[1].Anonymous.ki.dwFlags = KEYBD_EVENT_FLAGS.KEYEVENTF_KEYUP;
 
             Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
-        }
+        }//*/
     }
 
     public Task StartAsync()
