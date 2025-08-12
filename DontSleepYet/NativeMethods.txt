@@ -1,5 +1,6 @@
 ﻿GetCursorPos
 SetCursorPos
+GetMessageExtraInfo
 VK_F15
 SendInput
 GetDpiForWindow
