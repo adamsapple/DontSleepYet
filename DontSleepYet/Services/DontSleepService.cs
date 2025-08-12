@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -79,16 +80,20 @@ public class DontSleepService : IDontSleepService
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        /// 作戦1: マウスカーソルを(0, 0)移動する
+        var plan = "no-plan";
+        uint result = 0;
+        /*// 作戦1: マウスカーソルを(0, 0)移動する
         {
+            plan = "作戦1";
             System.Drawing.Point cursorPos;
             Windows.Win32.PInvoke.GetCursorPos(out cursorPos);
             Windows.Win32.PInvoke.SetCursorPos(cursorPos.X-1, cursorPos.Y); // Move the cursor to (0, 0) to prevent sleep
-            Windows.Win32.PInvoke.SetCursorPos(cursorPos.X, cursorPos.Y);   // Move the cursor to (0, 0) to prevent sleep
+            //Windows.Win32.PInvoke.SetCursorPos(cursorPos.X, cursorPos.Y);   // Move the cursor to (0, 0) to prevent sleep
         }//*/
 
         /*// 作戦2: F15キーを押下する
         {
+            plan = "作戦2";
             Span<INPUT> inputs = stackalloc INPUT[2];
 
             inputs[0].type = INPUT_TYPE.INPUT_KEYBOARD;
@@ -100,6 +105,38 @@ public class DontSleepService : IDontSleepService
 
             Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
         }//*/
+
+        /// 作戦3: マウスカーソルを(0, 0)移動する
+        {
+            plan = "作戦3";
+            Span<INPUT> inputs = stackalloc INPUT[2];
+            int mx = 5;
+            
+            inputs[0].type = INPUT_TYPE.INPUT_MOUSE;
+            inputs[0].Anonymous.mi.dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE;
+            inputs[0].Anonymous.mi.dx = -mx;
+            inputs[0].Anonymous.mi.dy = 0;
+            inputs[0].Anonymous.mi.mouseData = 0; // No additional data
+            inputs[0].Anonymous.mi.time = 0;      // Use the current time
+            inputs[0].Anonymous.mi.dwExtraInfo = (nuint)Windows.Win32.PInvoke.GetMessageExtraInfo().Value;
+
+            inputs[1].type = INPUT_TYPE.INPUT_MOUSE;
+            inputs[1].Anonymous.mi.dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE;
+            inputs[1].Anonymous.mi.dx = mx;
+            inputs[1].Anonymous.mi.dy = 0;
+            inputs[1].Anonymous.mi.mouseData = 0; // No additional data
+            inputs[1].Anonymous.mi.time = 0;      // Use the current time
+            inputs[1].Anonymous.mi.dwExtraInfo = (nuint)Windows.Win32.PInvoke.GetMessageExtraInfo().Value;
+            
+            result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>() * 2);
+
+            //inputs[0].Anonymous.mi.dx = mx;
+            
+            //result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
+        }//*/
+
+        Debug.WriteLine($"Dontsleep.OnTimerElapsed( {plan} ): = {result}, {DateTime.Now}");
+
     }
 
     public Task StartAsync()
