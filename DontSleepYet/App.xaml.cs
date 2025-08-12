@@ -81,6 +81,15 @@ public partial class App : Application
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
 
+            if (RuntimeHelper.IsMSIX)
+            {
+                services.AddSingleton<IUpdateService, PackagedUpdateService>();
+            }
+            else
+            {
+                services.AddSingleton<IUpdateService, GithubUnpackagedUpdateService>();
+            }
+
             // Core Services
             services.AddSingleton<IFileService, FileService>();
 

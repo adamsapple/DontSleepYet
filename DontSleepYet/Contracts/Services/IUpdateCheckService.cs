@@ -22,8 +22,9 @@ public class UpdateCheckData
     public DateTimeOffset PublishedAt { get; }
     public string? Description { get; }
     public Uri? InfoUrl { get; }
+    public Uri? ArchiveUrl { get; }
 
-    public UpdateCheckData(bool isCheckSuccess, bool isUpdateAvailable, string? latestVersion, DateTimeOffset publishedAt, string? description, Uri? infoUrl)
+    public UpdateCheckData(bool isCheckSuccess, bool isUpdateAvailable, string? latestVersion, DateTimeOffset publishedAt, string? description, Uri? infoUrl, Uri? archiveUrl)
     {
         IsCheckSuccess    = isCheckSuccess;
         IsUpdateAvailable = isUpdateAvailable;
@@ -31,5 +32,6 @@ public class UpdateCheckData
         PublishedAt       = publishedAt;
         Description       = description;
         InfoUrl           = infoUrl;
+        ArchiveUrl        = archiveUrl;
     }
 }

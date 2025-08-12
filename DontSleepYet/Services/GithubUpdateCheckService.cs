@@ -42,27 +42,27 @@ public class GithubUpdateCheckService : IUpdateCheckService
 
     public async Task<UpdateCheckData> CheckUpdateAsync()
     {
-        var url     = new Uri($"https://api.github.com/repos/{baseOption.User}/{baseOption.Repository}/releases/latest");
+        var url     = new Uri($"{baseOption.ApiUrl}/repos/{baseOption.User}/{baseOption.Repository}/releases/latest");
         
         var client  = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Get, url);
-        
-        //request.Headers.Add("Content-Type", "application/json");
-        request.Headers.Add("Accept", "application/vnd.github.v3+json");
-        request.Headers.Add("User-Agent", baseOption.Repository);
+
+        baseOption.AddHeader(request);
 
         var response = await client.SendAsync(request);
         
-        var isCheckSuccess = response.IsSuccessStatusCode;
+        var isCheckSuccess    = response.IsSuccessStatusCode;
         var isUpdateAvailable = false;
-        var latestVersion = string.Empty;
-        var description = string.Empty;
-        var publishedAt = DateTime.MinValue;
-        Uri? infoUrl = null;
+        var latestVersion     = string.Empty;
+        var description       = string.Empty;
+        var publishedAt       = DateTime.MinValue;
+        Uri? infoUrl          = null;
+        Uri? archiveUrl       = null;
 
         {
-            var release = JsonSerializer.Deserialize<GithubReleaseData>(
-                                await response.Content.ReadAsStringAsync(),
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            var release = JsonSerializer.Deserialize<GithubReleaseData>(jsonString,
                                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true,  }
            　                );
 
@@ -74,6 +74,7 @@ public class GithubUpdateCheckService : IUpdateCheckService
                 latestVersion = release.LatestVersion;
                 description 　= release.Body ?? string.Empty;
                 infoUrl 　　　= new Uri(release.HtmlUrl ?? string.Empty);
+                archiveUrl    = new Uri(release.Asset.BrowserDownloadUrl ?? string.Empty);
                 publishedAt 　= release.PublishedAt.LocalDateTime;
                 isUpdateAvailable = (latestVersionObj > currentVersionObj);
             }
@@ -84,7 +85,8 @@ public class GithubUpdateCheckService : IUpdateCheckService
                             latestVersion: latestVersion,
                             publishedAt: publishedAt,
                             description: description,
-                            infoUrl: infoUrl);        
+                            infoUrl: infoUrl,
+                            archiveUrl: archiveUrl);
 
         return result;
     }
@@ -109,6 +111,13 @@ public class GithubBaseOption
 {
     public required string User { get; set; }
     public required string Repository { get; set; }
+    public string? ApiUrl { get; set; } = "https://api.github.com";
+    public void AddHeader(HttpRequestMessage request)
+    {
+        //request.Headers.Add("Content-Type", "application/json");
+        request.Headers.Add("Accept", "application/vnd.github.v3+json");
+        request.Headers.Add("User-Agent", Repository);
+    }
 }
 
 class GithubReleaseData
@@ -122,6 +131,25 @@ class GithubReleaseData
     [JsonPropertyName("html_url")]
     public string? HtmlUrl { get; set; }
 
+    //[JsonPropertyName("zipball_url")]
+    [JsonPropertyName("assets[0].browser_download_url")]
+    public GithubReleaseAssetData Asset => _Assets[0];
+
     [JsonPropertyName("published_at")]
     public DateTimeOffset PublishedAt { get; set; }
+
+    [JsonPropertyName("assets")]
+    public List<GithubReleaseAssetData> _Assets { get; set; }
+}
+
+class GithubReleaseAssetData
+{
+    [JsonPropertyName("browser_download_url")]
+    public string? BrowserDownloadUrl { get; set; }
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+    [JsonPropertyName("content_type")]
+    public string? ContentType { get; set; }
+    [JsonPropertyName("size")]
+    public long Size { get; set; }
 }

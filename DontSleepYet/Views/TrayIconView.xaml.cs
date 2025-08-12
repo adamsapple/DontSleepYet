@@ -23,6 +23,11 @@ namespace DontSleepYet.Views;
 
 public sealed partial class TrayIconView : UserControl
 {
+    public ICommand ExitApplicationCommand { get; }
+    public ICommand ShowHideWindowCommand { get; }
+    public ICommand ShowWindowCommand { get; }
+    public ICommand UpdateCheckCommand { get; }
+
     public TrayIconView()
     {
         InitializeComponent();
@@ -42,13 +47,9 @@ public sealed partial class TrayIconView : UserControl
         ShowWindowCommand = new RelayCommand(ShowWindow);
         UpdateCheckCommand = new RelayCommand(UpdateCheckAsync);
 
-        notifyIcon.DoubleClickCommand = ShowWindowCommand;        
+        notifyIcon.DoubleClickCommand = ShowWindowCommand;
     }
 
-    public ICommand ExitApplicationCommand { get; }
-    public ICommand ShowHideWindowCommand { get; }
-    public ICommand ShowWindowCommand { get; }
-    public ICommand UpdateCheckCommand { get; }
 
     private void Exit()
     {

@@ -63,6 +63,10 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\Helpers\" />
+  </ItemGroup>
+
   <PropertyGroup Label="Globals">
     <WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
     <AssemblyVersion>0.0.2.4</AssemblyVersion>

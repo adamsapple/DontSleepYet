@@ -6,15 +6,20 @@ using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
 using Microsoft.UI.Xaml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using DispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 namespace DontSleepYet.ViewModels;
 
 public partial class MainViewModel : ObservableRecipient
 {
+    #region Services.
     private readonly ILocalSettingsService localSettingsService;
     private readonly IDontSleepService dontSleepService;
     private readonly ISystemInfoLiteService systemInfoLiteService;
+    private readonly IUpdateCheckService updateCheckService;
+    private readonly IUpdateService updateService;
+    #endregion Services.
 
     readonly string APP_DESCRIPTION = "自動ログオフ抑止(DontSleepYet)";
 
@@ -100,6 +105,20 @@ public partial class MainViewModel : ObservableRecipient
     }
 
 
+    [RelayCommand]
+    private async void Update()
+    {
+        var data = await updateCheckService.CheckUpdateAsync();
+    
+
+        if (data == null)// || !data.IsUpdateAvailable)
+        {
+            return;
+        }
+
+        await updateService.UpdateAsync(data.ArchiveUrl!);
+
+    }
     //[RelayCommand]
     //private async Task SaveWindowPosition()
     //{
@@ -122,11 +141,17 @@ public partial class MainViewModel : ObservableRecipient
     //    set => SetProperty(ref _cpuUsage, value);
     //}
 
-    public MainViewModel(ILocalSettingsService localSettingsService, IDontSleepService dontSleepService, ISystemInfoLiteService systemInfoLiteService)
+    public MainViewModel(ILocalSettingsService localSettingsService,
+                        IDontSleepService dontSleepService,
+                        ISystemInfoLiteService systemInfoLiteService,
+                        IUpdateCheckService updateCheckService,
+                        IUpdateService updateService)
     {
         this.localSettingsService  = localSettingsService;
         this.dontSleepService      = dontSleepService;
         this.systemInfoLiteService = systemInfoLiteService;
+        this.updateService         = updateService;
+        this.updateCheckService    = updateCheckService;
 
         // Initialize the service state
         dontSleepService.Initialize();

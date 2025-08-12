@@ -83,6 +83,7 @@
                 <TextBlock x:Uid="LastUpdateCheckedAt_Label" Margin="0,0,10,0"/>
                 <TextBlock Text="{x:Bind ViewModel.UpdateCheckedAt, Mode=OneWay, TargetNullValue='aaaa------'}"/>
             </StackPanel>
+            <Button Command="{x:Bind ViewModel.UpdateCommand}" Content="Update" />
         </StackPanel>
     </Grid>
 </Page>
