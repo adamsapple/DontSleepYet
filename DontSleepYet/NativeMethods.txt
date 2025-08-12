@@ -1,4 +1,5 @@
-﻿GetCursorPos
+﻿GetLastError
+GetCursorPos
 SetCursorPos
 GetMessageExtraInfo
 VK_F15

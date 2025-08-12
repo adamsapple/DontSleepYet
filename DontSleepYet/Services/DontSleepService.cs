@@ -109,8 +109,9 @@ public class DontSleepService : IDontSleepService
         /// 作戦3: マウスカーソルを(0, 0)移動する
         {
             plan = "作戦3";
-            Span<INPUT> inputs = stackalloc INPUT[2];
-            int mx = 5;
+            Span<INPUT> inputs = stackalloc INPUT[1];
+            //INPUT[] inputs = new INPUT[2];
+            var mx = 15;
             
             inputs[0].type = INPUT_TYPE.INPUT_MOUSE;
             inputs[0].Anonymous.mi.dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE;
@@ -120,18 +121,27 @@ public class DontSleepService : IDontSleepService
             inputs[0].Anonymous.mi.time = 0;      // Use the current time
             inputs[0].Anonymous.mi.dwExtraInfo = (nuint)Windows.Win32.PInvoke.GetMessageExtraInfo().Value;
 
-            inputs[1].type = INPUT_TYPE.INPUT_MOUSE;
-            inputs[1].Anonymous.mi.dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE;
-            inputs[1].Anonymous.mi.dx = mx;
-            inputs[1].Anonymous.mi.dy = 0;
-            inputs[1].Anonymous.mi.mouseData = 0; // No additional data
-            inputs[1].Anonymous.mi.time = 0;      // Use the current time
-            inputs[1].Anonymous.mi.dwExtraInfo = (nuint)Windows.Win32.PInvoke.GetMessageExtraInfo().Value;
-            
-            result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>() * 2);
+            //inputs[1].type = INPUT_TYPE.INPUT_MOUSE;
+            //inputs[1].Anonymous.mi.dwFlags = MOUSE_EVENT_FLAGS.MOUSEEVENTF_MOVE;
+            //inputs[1].Anonymous.mi.dx = 0;
+            //inputs[1].Anonymous.mi.dy = 0;
+            //inputs[1].Anonymous.mi.mouseData = 0; // No additional data
+            //inputs[1].Anonymous.mi.time = 1000;      // Use the current time
+            //inputs[1].Anonymous.mi.dwExtraInfo = (nuint)Windows.Win32.PInvoke.GetMessageExtraInfo().Value;
+
+            result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
+
+            inputs[0].Anonymous.mi.dx = mx;
+
+            result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
+
+            if (result != 0) 
+            {
+                //result = Windows.Win32.PInvoke.GetLastError();
+            }
 
             //inputs[0].Anonymous.mi.dx = mx;
-            
+
             //result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
         }//*/
 
