@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using CommunityToolkit.Common;
 using DontSleepYet.Activation;
 using DontSleepYet.Contracts.Services;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Composition.Diagnostics;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using Windows.Graphics;
 
 namespace DontSleepYet;
@@ -55,6 +57,25 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+
+
+        // 2重起動抑止
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var mutexName = string.Format("{0}-{1}-{2}",
+                              Process.GetCurrentProcess().ProcessName,
+                              assembly.GetCustomAttribute<AssemblyProductAttribute>()!.Product,
+                              assembly.GetCustomAttribute<AssemblyCompanyAttribute>()!.Company);
+
+            var mainInstance = AppInstance.FindOrRegisterForKey(mutexName);
+
+            if (!mainInstance.IsCurrent)
+            {
+                // 既に起動している場合は、こちらをKiilして終了
+                Process.GetCurrentProcess().Kill();
+                return;
+            }
+        }
 
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
