@@ -192,7 +192,7 @@
     <value>DontSleepYet</value>
   </data>
   <data name="UpdateCheckMenuItem.Text" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>更新をチェックする</value>
   </data>
   <data name="NotUpdateNotificationPayload" xml:space="preserve">
     <value>&lt;toast launch="action=UpdateCheck"&gt;
@@ -209,5 +209,8 @@
   </data>
   <data name="LastUpdateCheckedAt_Label.Text" xml:space="preserve">
     <value>最終更新チェック日:</value>
+  </data>
+  <data name="LaunchTetheringConfig.Text" xml:space="preserve">
+    <value>テザリング設定画面を開く</value>
   </data>
 </root>

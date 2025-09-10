@@ -27,6 +27,8 @@ public sealed partial class TrayIconView : UserControl
     public ICommand ShowHideWindowCommand { get; }
     public ICommand ShowWindowCommand { get; }
     public ICommand UpdateCheckCommand { get; }
+    public ICommand LaunchTetheringConfigCommand { get; }
+    
 
     public TrayIconView()
     {
@@ -46,6 +48,7 @@ public sealed partial class TrayIconView : UserControl
         ShowHideWindowCommand = new RelayCommand(ShowHideWindow);
         ShowWindowCommand = new RelayCommand(ShowWindow);
         UpdateCheckCommand = new RelayCommand(UpdateCheckAsync);
+        LaunchTetheringConfigCommand = new RelayCommand(LaunchTetheringConfig);
 
         notifyIcon.DoubleClickCommand = ShowWindowCommand;
     }
@@ -111,4 +114,9 @@ public sealed partial class TrayIconView : UserControl
         await updateNotificationService.StartAsync();
     }
 
+    private void LaunchTetheringConfig()
+    {
+        var controller = new Mobilespot.MobileHotspotController();
+        controller.LaunchConfig();
+    }
 }

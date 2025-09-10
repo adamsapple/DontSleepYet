@@ -119,6 +119,13 @@ public partial class MainViewModel : ObservableRecipient
         await updateService.UpdateAsync(data.ArchiveUrl!);
 
     }
+
+    [RelayCommand]
+    private async void LaunchTetheringConfig()
+    {
+        var controller = new Mobilespot.MobileHotspotController();
+        controller.LaunchConfig();
+    }
     //[RelayCommand]
     //private async Task SaveWindowPosition()
     //{

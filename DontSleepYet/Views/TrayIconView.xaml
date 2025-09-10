@@ -28,6 +28,10 @@
                     x:Uid="UpdateCheckMenuItem"
                     Command="{x:Bind UpdateCheckCommand}"
                     />
+                <MenuFlyoutItem
+                    x:Uid="LaunchTetheringConfig"
+                    Command="{x:Bind LaunchTetheringConfigCommand}"
+                    />
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     Text="Exit"

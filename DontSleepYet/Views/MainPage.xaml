@@ -84,6 +84,7 @@
                 <TextBlock Text="{x:Bind ViewModel.UpdateCheckedAt, Mode=OneWay, TargetNullValue='aaaa------'}"/>
             </StackPanel>
             <Button Command="{x:Bind ViewModel.UpdateCommand}" Content="Update" />
+            <Button Command="{x:Bind ViewModel.LaunchTetheringConfigCommand}" Content="Tethering Config" />
         </StackPanel>
     </Grid>
 </Page>

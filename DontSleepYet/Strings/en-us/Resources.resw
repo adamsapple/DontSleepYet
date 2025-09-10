@@ -209,4 +209,7 @@
   <data name="LastUpdateCheckedAt_Label.Text" xml:space="preserve">
     <value>Last update checked at:</value>
   </data>
+  <data name="LaunchTetheringConfig.Text" xml:space="preserve">
+    <value>Launch Tethering Config</value>
+  </data>
 </root>
