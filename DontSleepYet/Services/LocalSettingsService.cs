@@ -1,4 +1,6 @@
-﻿using DontSleepYet.Contracts.Services;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DontSleepYet.Contracts.Services;
 using DontSleepYet.Core.Contracts.Services;
 using DontSleepYet.Core.Helpers;
 using DontSleepYet.Helpers;
@@ -27,6 +29,31 @@ public class LocalSettingsService : ILocalSettingsService
 
     private bool _isInitialized;
 
+    private LocalSettingsOptions LocalSettingsOptions { get; } = new LocalSettingsOptions();
+    
+        
+
+    private async void LocalSettingsOptions_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName is null)
+        {
+            return;
+        }
+
+        if (sender != LocalSettingsOptions)
+        {
+            return;
+        }
+
+        var type = sender!.GetType()!;
+        var prop = type.GetProperty(e.PropertyName!);
+
+        var val = prop.GetValue(sender);
+
+        await SaveSettingAsync(e.PropertyName, val);
+    }
+
+
     public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
     {
         _fileService = fileService;
@@ -36,6 +63,8 @@ public class LocalSettingsService : ILocalSettingsService
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
+
+        LocalSettingsOptions.PropertyChanged += LocalSettingsOptions_OnPropertyChanged;
     }
 
     private async Task InitializeAsync()

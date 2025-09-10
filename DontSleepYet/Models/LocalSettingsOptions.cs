@@ -1,24 +1,34 @@
-﻿namespace DontSleepYet.Models;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-public class LocalSettingsOptions
+namespace DontSleepYet.Models;
+
+public partial class LocalSettingsOptions : ModelBase
 {
-    public string? ApplicationDataFolder
+    [ObservableProperty]
+    private string? applicationDataFolder;
+    
+
+    [ObservableProperty]
+    private string? localSettingsFile;
+    
+
+    [ObservableProperty]
+    private int dontSleepWakeUpDurationSeconds;
+
+    [ObservableProperty]
+    private bool isDontSleepActive;
+
+    public LocalSettingsOptions()
     {
-        get; set;
+        PropertyChanged += OnPropertyChanged;
     }
 
-    public string? LocalSettingsFile
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        get; set;
-    }
-
-    public int DontSleepWakeUpDurationSeconds
-    {
-        get; set;
-    }
-
-    public bool IsDontSleepActive
-    {
-        get; set;
+        if (e.PropertyName == nameof(DontSleepWakeUpDurationSeconds))
+        {
+            DontSleepWakeUpDurationSeconds = DontSleepWakeUpDurationSeconds < 1 ? 1 : DontSleepWakeUpDurationSeconds;
+        }
     }
 }
