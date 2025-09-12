@@ -6,3 +6,6 @@ VK_F15
 SendInput
 GetDpiForWindow
 GetWindowHandle
+SetWindowsHookEx
+UnhookWindowsHookEx
+GetModuleHandle

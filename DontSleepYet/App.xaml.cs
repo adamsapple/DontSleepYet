@@ -94,6 +94,7 @@ public partial class App : Application
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
             services.AddSingleton<IDontSleepService, DontSleepService>();
+            services.AddSingleton<IKeyHookService, KeyHookService>();
             services.AddSingleton<ISystemInfoLiteService, SystemInfoLiteService>();
             services.AddSingleton<IUpdateCheckService, GithubUpdateCheckService>();
             services.AddSingleton<IUpdateNotificationService, UpdateNotificationService>();
@@ -130,6 +131,8 @@ public partial class App : Application
 
         App.GetService<IAppNotificationService>().Initialize();
         localSettingsService = App.GetService<ILocalSettingsService>();
+
+        App.GetService<IKeyHookService>().Start();
 
         UnhandledException += App_UnhandledException;
     }
@@ -197,6 +200,9 @@ public partial class App : Application
                 args.Handled = true;
                 MainWindow.Hide();
             }
+        };
+
+        MainWindow.SizeChanged += (sender, args) => { 
         };
 
         WindowPositionSettingCalled = true;
