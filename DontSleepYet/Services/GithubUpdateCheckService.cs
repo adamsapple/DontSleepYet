@@ -55,7 +55,7 @@ public class GithubUpdateCheckService : IUpdateCheckService
         var isUpdateAvailable = false;
         var latestVersion     = string.Empty;
         var description       = string.Empty;
-        var publishedAt       = DateTime.MinValue;
+        var publishedAt       = DateTimeOffset.MinValue;
         Uri? infoUrl          = null;
         Uri? archiveUrl       = null;
 
@@ -75,7 +75,7 @@ public class GithubUpdateCheckService : IUpdateCheckService
                 description 　= release.Body ?? string.Empty;
                 infoUrl 　　　= new Uri(release.HtmlUrl ?? string.Empty);
                 archiveUrl    = new Uri(release.Asset.BrowserDownloadUrl ?? string.Empty);
-                publishedAt 　= release.PublishedAt.LocalDateTime;
+                publishedAt = release.PublishedAt;//.LocalDateTime;
                 isUpdateAvailable = (latestVersionObj > currentVersionObj);
             }
         }
