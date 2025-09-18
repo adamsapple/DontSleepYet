@@ -115,6 +115,8 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<IFileService, FileService>();
 
+            // Models
+            services.AddSingleton<LocalSettingsOptions>();
             // Views and ViewModels
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<SettingsPage>();

@@ -19,17 +19,18 @@ public class LocalSettingsService : ILocalSettingsService
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
 
     private readonly IFileService _fileService;
-    private readonly LocalSettingsOptions _options;
+    //private readonly LocalSettingsOptions _options;
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private readonly string _applicationDataFolder;
     private readonly string _localsettingsFile;
 
     private IDictionary<string, object> _settings;
+    private static Mutex mut = new Mutex();
 
     private bool _isInitialized;
 
-    private LocalSettingsOptions LocalSettingsOptions { get; } = new LocalSettingsOptions();
+    private LocalSettingsOptions LocalSettingsOptions { get; } // = new LocalSettingsOptions();
     
         
 
@@ -57,24 +58,33 @@ public class LocalSettingsService : ILocalSettingsService
     public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
     {
         _fileService = fileService;
-        _options = options.Value;
+        
+        LocalSettingsOptions = options.Value;
+        LocalSettingsOptions.PropertyChanged += LocalSettingsOptions_OnPropertyChanged;
 
-        _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
-        _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
+        _applicationDataFolder = Path.Combine(_localApplicationData, LocalSettingsOptions.ApplicationDataFolder ?? _defaultApplicationDataFolder);
+        _localsettingsFile = LocalSettingsOptions.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         _settings = new Dictionary<string, object>();
 
-        LocalSettingsOptions.PropertyChanged += LocalSettingsOptions_OnPropertyChanged;
+        
     }
 
     private async Task InitializeAsync()
     {
-        if (!_isInitialized)
+        if (_isInitialized)
         {
-            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
-
-            _isInitialized = true;
+            return;
         }
+
+        _settings = await Task.Run(() => {
+            mut.WaitOne();
+            var ret = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile);
+            mut.ReleaseMutex();
+            return ret;
+        }) ?? new Dictionary<string, object>();
+
+        _isInitialized = true;
     }
 
     //public async Task<T?> ReadSettingAsync<T>(string key)
@@ -135,7 +145,11 @@ public class LocalSettingsService : ILocalSettingsService
 
             _settings[key] = await Json.StringifyAsync(value);
 
-            await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+            await Task.Run(() => {
+                mut.WaitOne();
+                _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings);
+                mut.ReleaseMutex();
+            });
         }
     }
 
