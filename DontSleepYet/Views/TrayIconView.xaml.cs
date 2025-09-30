@@ -6,6 +6,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
+using DontSleepYet.Models;
+using DontSleepYet.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,9 +30,12 @@ public sealed partial class TrayIconView : UserControl
     public ICommand ShowWindowCommand { get; }
     public ICommand UpdateCheckCommand { get; }
     public ICommand LaunchTetheringConfigCommand { get; }
-    
+    public ICommand ToggleDontSleepActiveCommand { get; }
 
-    public TrayIconView()
+    private LocalSettingsOptions LocalSettingsOptions { get; }
+
+
+    public TrayIconView()   // LocalSettingsOptions localSettingsOptions
     {
         InitializeComponent();
 
@@ -49,8 +54,13 @@ public sealed partial class TrayIconView : UserControl
         ShowWindowCommand = new RelayCommand(ShowWindow);
         UpdateCheckCommand = new RelayCommand(UpdateCheckAsync);
         LaunchTetheringConfigCommand = new RelayCommand(LaunchTetheringConfig);
+        ToggleDontSleepActiveCommand = new RelayCommand(ToggleDontSleepActive);
+
+        //LocalSettingsOptions = localSettingsOptions;
+        //LocalSettingsOptions = App.GetService<LocalSettingsOptions>();ttuu
 
         notifyIcon.DoubleClickCommand = ShowWindowCommand;
+        LocalSettingsOptions = App.GetService<LocalSettingsOptions>();
     }
 
 
@@ -118,5 +128,10 @@ public sealed partial class TrayIconView : UserControl
     {
         var controller = new Mobilespot.MobileHotspotController();
         controller.LaunchConfig();
+    }
+
+    private void ToggleDontSleepActive()
+    {
+        LocalSettingsOptions.IsDontSleepActive = !LocalSettingsOptions.IsDontSleepActive;
     }
 }

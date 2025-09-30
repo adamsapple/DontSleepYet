@@ -98,6 +98,7 @@ public partial class App : Application
             services.AddSingleton<ISystemInfoLiteService, SystemInfoLiteService>();
             services.AddSingleton<IUpdateCheckService, GithubUpdateCheckService>();
             services.AddSingleton<IUpdateNotificationService, UpdateNotificationService>();
+            services.AddSingleton<SettingApplyService>();
 
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
@@ -115,10 +116,14 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<IFileService, FileService>();
 
+            // Models.
+            services.AddSingleton<LocalSettingsOptions>();
+
             // Views and ViewModels
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
             services.AddSingleton<MainViewModel>();
+            services.AddTransient<TrayIconView>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddSingleton<ShellViewModel>();
@@ -130,6 +135,8 @@ public partial class App : Application
         Build();
 
         App.GetService<IAppNotificationService>().Initialize();
+        App.GetService<SettingApplyService>();
+
         localSettingsService = App.GetService<ILocalSettingsService>();
 
         App.GetService<IKeyHookService>().Start();
@@ -150,6 +157,8 @@ public partial class App : Application
         /// show Toast notification.
         //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
+        await localSettingsService.InitializeAsync();
+
         await MainWindowSetting();
 
         await App.GetService<IActivationService>().ActivateAsync(args);
@@ -159,7 +168,7 @@ public partial class App : Application
 #endif
 
         /// 更新確認サービスを開始
-        await App.GetService<IUpdateNotificationService>().StartAsync();
+        //await App.GetService<IUpdateNotificationService>().StartAsync();
     }
 
     private bool WindowPositionSettingCalled = false;
@@ -179,7 +188,9 @@ public partial class App : Application
 
         /// MainWindowの位置を復元する
         {
-            var pos = await localSettingsService.ReadSettingAsync<PointInt32>("WindowPosition.Pos");
+            //var pos = await localSettingsService.ReadSettingAsync<PointInt32>("WindowPosition.Pos");
+            var pos = App.GetService<LocalSettingsOptions>().WindowPotition;
+
             MainWindow.AppWindow.Move(pos);
         }
 
@@ -187,11 +198,14 @@ public partial class App : Application
         {
             /// Save the position of the MainWindow when it is closed
             {
+                var localSettingOptions = App.GetService<LocalSettingsOptions>();
+
                 var pos = MainWindow.AppWindow.Position;
                 //Debug.WriteLine($"MainWindow closed. Position: {pos.X}, {pos.Y}");
 
                 //var localSettingsService = App.GetService<ILocalSettingsService>();
-                localSettingsService.SaveSettingAsync("WindowPosition.Pos", pos).GetResultOrDefault();
+                //localSettingsService.SaveSettingAsync("WindowPosition.Pos", pos).GetResultOrDefault();
+                localSettingOptions.WindowPotition = pos;
             }
 
             /// Windowのクローズボタン押下時は、MainWindowを隠すだけにする

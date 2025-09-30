@@ -13,14 +13,19 @@ public class FileService : IFileService
         var path = Path.Combine(folderPath, fileName);
         if (File.Exists(path))
         {
+            mut.WaitOne();
+            
             var json = File.ReadAllText(path);
+            
+            mut.ReleaseMutex();
+
             return JsonConvert.DeserializeObject<T>(json);
         }
 
         return default;
     }
 
-    private Mutex mut = new Mutex();
+    private readonly Mutex mut = new();
 
     public void Save<T>(string folderPath, string fileName, T content)
     {
@@ -29,9 +34,10 @@ public class FileService : IFileService
             Directory.CreateDirectory(folderPath);
         }
 
+        var fileContent = JsonConvert.SerializeObject(content);
+
         mut.WaitOne();
 
-        var fileContent = JsonConvert.SerializeObject(content);
         File.WriteAllText(Path.Combine(folderPath, fileName), fileContent, Encoding.UTF8);
         
         mut.ReleaseMutex();

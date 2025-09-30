@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Common;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
+using DontSleepYet.Models;
 using Microsoft.UI.Dispatching;
 
 namespace DontSleepYet.Services;
@@ -16,6 +17,7 @@ public class UpdateNotificationService : IUpdateNotificationService
     private readonly IUpdateCheckService updateCheckService;
     private readonly ILocalSettingsService localSettingsService;
     private readonly IAppNotificationService appNotificationService;
+    private readonly LocalSettingsOptions localSettingOptions;
 #endregion Services.
 
     private readonly DispatcherQueue dispatcherQueue;
@@ -148,10 +150,14 @@ public class UpdateNotificationService : IUpdateNotificationService
         /// 今回のversionは無視するように設定する
         Task.Run(async () =>
         {
+            //var localSettingOptions = App.GetService<LocalSettingsOptions>();
+
+            localSettingOptions.UpdateCheck_Ignore_Version     = latestCheckData.LatestVersion;
+            localSettingOptions.UpdateCheck_Ignore_PublishedAt = latestCheckData.PublishedAt;
             // Debug.WriteLine($"Ignore this version: {latestCheckData.LatestVersion}");
 
-            await localSettingsService.SaveSettingAsync("UpdateCheck.Ignore.Version", latestCheckData.LatestVersion);
-            await localSettingsService.SaveSettingAsync("UpdateCheck.Ignore.PublishedAt", latestCheckData.PublishedAt);
+            //await localSettingsService.SaveSettingAsync("UpdateCheck.Ignore.Version", latestCheckData.LatestVersion);
+            //await localSettingsService.SaveSettingAsync("UpdateCheck.Ignore.PublishedAt", latestCheckData.PublishedAt);
         }).GetResultOrDefault();
     }
 
@@ -170,14 +176,21 @@ public class UpdateNotificationService : IUpdateNotificationService
         }
 
 #if DEBUG
-        await localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", DateTime.MinValue); // test code/
+        localSettingOptions.UpdateCheck_LastCheckedAt = DateTime.MinValue; // test code/
+        //await localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", DateTime.MinValue); // test code/
 #endif
 
-        LastCheckedAt     = await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
-        CheckPeriod       = await localSettingsService.ReadSettingAsync<TimeSpan>("UpdateCheck.CheckPeriod", TimeSpan.FromDays(1));
+        //LastCheckedAt     = await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
+        //CheckPeriod       = await localSettingsService.ReadSettingAsync<TimeSpan>("UpdateCheck.CheckPeriod", TimeSpan.FromDays(1));
 
-        ignoreVersion     = await localSettingsService.ReadSettingAsync<string>("UpdateCheck.Ignore.Version") ?? string.Empty;
-        ignorePublishedAt = await localSettingsService.ReadSettingAsync<DateTimeOffset>("UpdateCheck.Ignore.PublishedAt");
+        //ignoreVersion     = await localSettingsService.ReadSettingAsync<string>("UpdateCheck.Ignore.Version") ?? string.Empty;
+        //ignorePublishedAt = await localSettingsService.ReadSettingAsync<DateTimeOffset>("UpdateCheck.Ignore.PublishedAt");
+
+        LastCheckedAt     = localSettingOptions.UpdateCheck_LastCheckedAt;
+        //CheckPeriod       = await localSettingsService.ReadSettingAsync<TimeSpan>("UpdateCheck.CheckPeriod", TimeSpan.FromDays(1));
+
+        ignoreVersion     = localSettingOptions.UpdateCheck_Ignore_Version ?? string.Empty;
+        ignorePublishedAt = localSettingOptions.UpdateCheck_Ignore_PublishedAt;
 
         isInitialized = true;
     }
@@ -197,9 +210,10 @@ public class UpdateNotificationService : IUpdateNotificationService
                 return;
             }
 
-            Task.Run(() => {
-                localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", LastCheckedAt).GetResultOrDefault();
-            });
+            //Task.Run(() => {
+            //    localSettingsService.SaveSettingAsync("UpdateCheck.LastCheckedAt", LastCheckedAt).GetResultOrDefault();
+            //});
+            localSettingOptions.UpdateCheck_LastCheckedAt = value;
 
             _lastCheckedAt = value;
         }
@@ -218,11 +232,13 @@ public class UpdateNotificationService : IUpdateNotificationService
 
     public UpdateNotificationService(IUpdateCheckService updateCheckService,
                                      ILocalSettingsService localSettingsService,
-                                     IAppNotificationService appNotificationService)
+                                     IAppNotificationService appNotificationService,
+                                     LocalSettingsOptions localSettingOptions)
     {
         this.updateCheckService     = updateCheckService;
         this.localSettingsService   = localSettingsService;
         this.appNotificationService = appNotificationService;
+        this.localSettingOptions    = localSettingOptions;
 
         dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
     }
