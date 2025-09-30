@@ -28,6 +28,12 @@
                     x:Uid="UpdateCheckMenuItem"
                     Command="{x:Bind UpdateCheckCommand}"
                     />
+                <ToggleMenuFlyoutItem
+                    x:Uid="IsDisableLogoff_ToggleItem"
+                    IsChecked="{x:Bind LocalSettingsOptions.IsDontSleepActive, Mode=TwoWay}"
+                    Command="{x:Bind ToggleDontSleepActiveCommand}"
+                    />
+                <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     x:Uid="LaunchTetheringConfig"
                     Command="{x:Bind LaunchTetheringConfigCommand}"

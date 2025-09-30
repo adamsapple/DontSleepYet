@@ -20,12 +20,16 @@
     <Grid x:Name="ContentArea">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.IsDontSleepActive, Mode=TwoWay}" Margin="0,0,-30,0" />
+                <ToggleSwitch IsOn="{x:Bind ViewModel.LocalSettingsOptions.IsDontSleepActive, Mode=TwoWay}" Margin="0,0,-50,0" />
                 <TextBlock x:Uid="EnableDontSleep_ToggleSwitch" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.IsRegistStartUp, Mode=TwoWay}"  Margin="0,0,-30,0" />
+                <ToggleSwitch IsOn="{x:Bind ViewModel.IsRegistStartUp, Mode=TwoWay}"  Margin="0,0,-50,0" />
                 <TextBlock x:Uid="StartUp_TogleSwitch" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ToggleSwitch IsOn="{x:Bind ViewModel.IsEnabledKeyHookForAudioControl, Mode=TwoWay}"  Margin="0,0,-50,0" />
+                <TextBlock x:Uid="EnableKeyHookForAudioControl_ToggleSwitch" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Grid HorizontalAlignment="Left" Padding="4">
