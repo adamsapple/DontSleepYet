@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<windowex:WindowEx
+    x:Class="DontSleepYet.NotificationWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DontSleepYet"
+    xmlns:windowex="using:WinUIEx"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="NortificationWindow"
+    IsMaximizable="False"
+    IsMinimizable="False"
+    IsResizable="False"
+    Width="500"
+    Height="200">
+    <!--<Storyboard x:Name="Storyboard1">
+        <DoubleAnimation Storyboard.TargetName="Translation" Storyboard.TargetProperty="X" From="0" To="200" >
+            <DoubleAnimation.EasingFunction>
+                <CircleEase EasingMode="EaseInOut" />
+            </DoubleAnimation.EasingFunction>
+        </DoubleAnimation>
+    </Storyboard>-->
+    <windowex:WindowEx.SystemBackdrop>
+        <MicaBackdrop />
+    </windowex:WindowEx.SystemBackdrop>
+</windowex:WindowEx>
