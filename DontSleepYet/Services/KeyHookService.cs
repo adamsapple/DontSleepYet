@@ -20,8 +20,15 @@ namespace DontSleepYet.Services;
 public class KeyHookService : Contracts.Services.IKeyHookService
 {
     private UnhookWindowsHookExSafeHandle? hookHandle = null;
+    private readonly HOOKPROC hookProcDelegate;
+
     public bool IsStarted { get; private set; } = false;
 
+
+    public KeyHookService()
+    {
+        hookProcDelegate = HookCallback;        // メソッドのリファレンスをdelgateとして明確に受け取っておく(ローカルからヒープへ)
+    }
 
     private void StartHook()
     {
@@ -43,8 +50,8 @@ public class KeyHookService : Contracts.Services.IKeyHookService
             // 第4引数	スレッドID
             //   0を指定すると、すべてのスレッドでフックされる
             hookHandle = Windows.Win32.PInvoke.SetWindowsHookEx(
-                                                WINDOWS_HOOK_ID.WH_KEYBOARD_LL, 
-                                                HookCallback, 
+                                                WINDOWS_HOOK_ID.WH_KEYBOARD_LL,
+                                                hookProcDelegate, 
                                                 Windows.Win32.PInvoke.GetModuleHandle(module!.ModuleName), 
                                                 0);
         }
@@ -140,6 +147,7 @@ public class KeyHookService : Contracts.Services.IKeyHookService
         {
             return;
         }
+
         var ptr = hookHandle.DangerousGetHandle();
         
         Windows.Win32.PInvoke.UnhookWindowsHookEx(new HHOOK(ptr));
