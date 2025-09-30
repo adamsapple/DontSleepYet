@@ -28,7 +28,7 @@
                 <TextBlock x:Uid="StartUp_TogleSwitch" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ToggleSwitch IsOn="{x:Bind ViewModel.IsEnabledKeyHookForAudioControl, Mode=TwoWay}"  Margin="0,0,-50,0" />
+                <ToggleSwitch IsOn="{x:Bind ViewModel.LocalSettingsOptions.IsEnabledKeyHookForAudioControl, Mode=TwoWay}"  Margin="0,0,-50,0" />
                 <TextBlock x:Uid="EnableKeyHookForAudioControl_ToggleSwitch" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
