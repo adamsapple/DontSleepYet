@@ -51,7 +51,7 @@ public partial class LocalSettingsOptions : ModelBase
     {
         if (e.PropertyName == nameof(DontSleepWakeUpDurationSeconds))
         {
-            DontSleepWakeUpDurationSeconds = DontSleepWakeUpDurationSeconds < 1 ? 1 : DontSleepWakeUpDurationSeconds;
+            DontSleepWakeUpDurationSeconds = DontSleepWakeUpDurationSeconds < 5 ? 5 : DontSleepWakeUpDurationSeconds;
         }
 
         //await _localSettingsService.SaveSettingAsync(e.PropertyName!, GetType().GetProperty(e.PropertyName!)!.GetValue(this));

@@ -70,7 +70,7 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
             return;
         }
 
-        dontSleepService.WakeUpDurationSeconds = value;
+        LocalSettingsOptions.DontSleepWakeUpDurationSeconds = value;
     }
 
     [ObservableProperty]
@@ -164,7 +164,7 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
 
         // Initialize the service state
         dontSleepService.Initialize();
-        DontSleepDurationSeconds = dontSleepService.WakeUpDurationSeconds;
+        DontSleepDurationSeconds = localSettingsOptions.DontSleepWakeUpDurationSeconds;
 
         //IsDontSleepActive = dontSleepService.IsActive;
         IsRegistStartUp = StartUpHelper.ExistsStartUp_CurrentUserRun(APP_DESCRIPTION);

@@ -40,7 +40,9 @@ public class SettingApplyService
 
     public async Task ApplyServicesAsync()
     {
-        if(dontSleepService.IsActive != localSettings.IsDontSleepActive)
+        dontSleepService.WakeUpDurationSeconds = localSettings.DontSleepWakeUpDurationSeconds;
+
+        if (dontSleepService.IsActive != localSettings.IsDontSleepActive)
         {
             if (localSettings.IsDontSleepActive)
             {
@@ -79,9 +81,22 @@ public class SettingApplyService
 
         switch (e.PropertyName!)
         {
+            case nameof(LocalSettingsOptions.DontSleepWakeUpDurationSeconds):
+                {
+                    var value = sender!.GetType().GetProperty(e.PropertyName!)!.GetValue(sender) as int?;
+                    if (value is null)
+                    {
+                        return;
+                    }
+
+                    dontSleepService.WakeUpDurationSeconds = value.Value;
+                }
+
+                break;
             case nameof(LocalSettingsOptions.IsDontSleepActive):
                 {
                     var enabled = sender!.GetType().GetProperty(e.PropertyName!)!.GetValue(sender) as bool?;
+                    
                     if (enabled is null)
                     {
                         return;
@@ -118,5 +133,5 @@ public class SettingApplyService
 
                 break;
         }
-    }    
+    }
 }
