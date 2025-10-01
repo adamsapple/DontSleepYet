@@ -50,6 +50,12 @@
                         AlwaysShowHeader="True"
                         PaneTitle=" "
                         >
+            <NavigationView.Resources>
+                <x:Double x:Key="NavigationViewItemOnLeftMinHeight">64</x:Double>
+                <x:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">32</x:Double>
+                <x:Double x:Key="NavigationViewSelectionIndicatorHeight">32</x:Double>
+                <x:Double x:Key="PaneToggleButtonHeight">70</x:Double>
+            </NavigationView.Resources>
             <NavigationView.MenuItems>
                 <!--
                 TODO: Update item titles by updating <x:Uid>.Content entries in Strings/en-us/Resources.resw.
@@ -61,7 +67,7 @@
                 <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="DontSleepYet.ViewModels.MainViewModel"
                                     >
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe80f;"
                                   FontSize="30"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
