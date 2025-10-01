@@ -136,12 +136,15 @@ public partial class App : Application
         }).
         Build();
 
-        App.GetService<IAppNotificationService>().Initialize();
-        App.GetService<SettingApplyService>();
+        /// 事前にインスタンス化&初期化しておくServices.
+        /// (ここの順番が結構デリケートになってしまった)
+        {
+            App.GetService<IAppNotificationService>().Initialize();
+            App.GetService<IDontSleepService>().Initialize();
+            App.GetService<SettingApplyService>();
+        }
 
         localSettingsService = App.GetService<ILocalSettingsService>();
-
-        App.GetService<IKeyHookService>().Start();
 
         UnhandledException += App_UnhandledException;
     }

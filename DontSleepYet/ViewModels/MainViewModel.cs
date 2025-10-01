@@ -162,8 +162,6 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
 
         APP_DESCRIPTION = nameof(APP_DESCRIPTION).GetLocalized();
 
-        // Initialize the service state
-        dontSleepService.Initialize();
         DontSleepDurationSeconds = localSettingsOptions.DontSleepWakeUpDurationSeconds;
 
         //IsDontSleepActive = dontSleepService.IsActive;
