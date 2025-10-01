@@ -27,6 +27,7 @@ public class LocalSettingsService : ILocalSettingsService
     private readonly string _localsettingsFile;
 
     private IDictionary<string, object> _settings;
+    private static Mutex mut = new Mutex();
 
     private bool _isInitialized;
     private readonly ReaderWriterLockSlim fileLlock = new();        //< ファイルアクセス用ロック
@@ -40,7 +41,7 @@ public class LocalSettingsService : ILocalSettingsService
     /// <param name="e"></param>
     private async void LocalSettingsOptions_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (!_isInitialized)
+        if(e.PropertyName is null)
         {
             return;
         }
