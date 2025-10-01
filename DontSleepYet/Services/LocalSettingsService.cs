@@ -32,13 +32,7 @@ public class LocalSettingsService : ILocalSettingsService
     private bool _isInitialized;
     private readonly ReaderWriterLockSlim fileLlock = new();        //< ファイルアクセス用ロック
 
-<<<<<<< HEAD
-    private LocalSettingsOptions LocalSettingsOptions { get; } // = new LocalSettingsOptions();
-    
-        
-=======
     private readonly LocalSettingsOptions LocalSettingsOptions;
->>>>>>> f7742b7651ae982477e1714894ae239754213f31
 
     /// <summary>
     /// 
@@ -47,7 +41,7 @@ public class LocalSettingsService : ILocalSettingsService
     /// <param name="e"></param>
     private async void LocalSettingsOptions_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (!_isInitialized)
+        if(e.PropertyName is null)
         {
             return;
         }
@@ -78,17 +72,6 @@ public class LocalSettingsService : ILocalSettingsService
     {
         _fileService = fileService;
         
-<<<<<<< HEAD
-        LocalSettingsOptions = options.Value;
-        LocalSettingsOptions.PropertyChanged += LocalSettingsOptions_OnPropertyChanged;
-
-        _applicationDataFolder = Path.Combine(_localApplicationData, LocalSettingsOptions.ApplicationDataFolder ?? _defaultApplicationDataFolder);
-        _localsettingsFile = LocalSettingsOptions.LocalSettingsFile ?? _defaultLocalSettingsFile;
-
-        _settings = new Dictionary<string, object>();
-
-        
-=======
         options.IsDontSleepActive              = defaultOptions.Value.IsDontSleepActive;
         options.LocalSettingsFile              = defaultOptions.Value.LocalSettingsFile;
         options.ApplicationDataFolder          = defaultOptions.Value.ApplicationDataFolder; 
@@ -103,26 +86,12 @@ public class LocalSettingsService : ILocalSettingsService
         _settings = new Dictionary<string, object>();
 
         LocalSettingsOptions = options;
->>>>>>> f7742b7651ae982477e1714894ae239754213f31
     }
 
     public async Task InitializeAsync()
     {
         if (_isInitialized)
         {
-<<<<<<< HEAD
-            return;
-        }
-
-        _settings = await Task.Run(() => {
-            mut.WaitOne();
-            var ret = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile);
-            mut.ReleaseMutex();
-            return ret;
-        }) ?? new Dictionary<string, object>();
-
-        _isInitialized = true;
-=======
             return; 
         }
         
@@ -172,7 +141,6 @@ public class LocalSettingsService : ILocalSettingsService
         }
 
         _isInitialized = true;        
->>>>>>> f7742b7651ae982477e1714894ae239754213f31
     }
 
     //public async Task<T?> ReadSettingAsync<T>(string key)
@@ -240,11 +208,6 @@ public class LocalSettingsService : ILocalSettingsService
             _settings[key] = await Json.StringifyAsync(value);
 
             await Task.Run(() => {
-<<<<<<< HEAD
-                mut.WaitOne();
-                _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings);
-                mut.ReleaseMutex();
-=======
                 fileLlock.EnterWriteLock();
                 try
                 {
@@ -254,7 +217,6 @@ public class LocalSettingsService : ILocalSettingsService
                 {
                     fileLlock.ExitWriteLock();
                 }
->>>>>>> f7742b7651ae982477e1714894ae239754213f31
             });
         }
     }
