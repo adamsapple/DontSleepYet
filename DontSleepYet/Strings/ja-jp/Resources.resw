@@ -222,4 +222,7 @@
   <data name="APP_DESCRIPTION" xml:space="preserve">
     <value>自動ログオフ抑止(DontSleepYet)</value>
   </data>
+  <data name="Shell_About.Content" xml:space="preserve">
+    <value>About</value>
+  </data>
 </root>

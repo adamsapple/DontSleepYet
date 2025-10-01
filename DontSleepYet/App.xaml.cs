@@ -119,14 +119,16 @@ public partial class App : Application
             // Models.
             services.AddSingleton<LocalSettingsOptions>();
 
-            // Views and ViewModels
+            // Views and ViewModels            
+            services.AddSingleton<MainViewModel>();
+            services.AddTransient<MainPage>();
+            services.AddSingleton<AboutViewModel>();
+            services.AddTransient<AboutPage>();
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
-            services.AddSingleton<MainViewModel>();
             services.AddTransient<TrayIconView>();
-            services.AddTransient<MainPage>();
-            services.AddTransient<ShellPage>();
             services.AddSingleton<ShellViewModel>();
+            services.AddTransient<ShellPage>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

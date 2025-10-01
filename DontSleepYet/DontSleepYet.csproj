@@ -20,6 +20,7 @@
     <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\AboutPage.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +56,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\AboutPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="NotificationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
