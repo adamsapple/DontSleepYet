@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
@@ -13,7 +14,7 @@ using DispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 namespace DontSleepYet.ViewModels;
 
-public partial class MainViewModel : ObservableRecipient
+public partial class MainViewModel : ObservableValidator//ObservableRecipient
 {
     #region Services.
     private readonly ILocalSettingsService localSettingsService;
@@ -23,7 +24,7 @@ public partial class MainViewModel : ObservableRecipient
     private readonly IUpdateService updateService;
     #endregion Services.
 
-    readonly string APP_DESCRIPTION = "自動ログオフ抑止(DontSleepYet)";
+    private readonly string APP_DESCRIPTION;
 
     private bool isRegistStartUp = false;
 
@@ -58,6 +59,19 @@ public partial class MainViewModel : ObservableRecipient
     }
 
 
+    [ObservableProperty]
+    [Range(5, 119, ErrorMessage = "範囲外です")]
+    private int _dontSleepDurationSeconds = 30;
+
+    partial void OnDontSleepDurationSecondsChanged(int value)
+    {
+        if(int.IsNegative(value) || dontSleepService.WakeUpDurationSeconds == value)
+        {
+            return;
+        }
+
+        dontSleepService.WakeUpDurationSeconds = value;
+    }
 
     [ObservableProperty]
     private double _cpuUsage = 0.0;
@@ -145,8 +159,12 @@ public partial class MainViewModel : ObservableRecipient
         this.updateCheckService    = updateCheckService;
         this.LocalSettingsOptions  = localSettingsOptions;
 
+
+        APP_DESCRIPTION = nameof(APP_DESCRIPTION).GetLocalized();
+
         // Initialize the service state
         dontSleepService.Initialize();
+        DontSleepDurationSeconds = dontSleepService.WakeUpDurationSeconds;
 
         //IsDontSleepActive = dontSleepService.IsActive;
         IsRegistStartUp = StartUpHelper.ExistsStartUp_CurrentUserRun(APP_DESCRIPTION);

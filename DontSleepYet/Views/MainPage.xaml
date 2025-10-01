@@ -21,6 +21,13 @@
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
                 <ToggleSwitch IsOn="{x:Bind ViewModel.LocalSettingsOptions.IsDontSleepActive, Mode=TwoWay}" Margin="0,0,-50,0" />
+                <NumberBox Value="{x:Bind ViewModel.DontSleepDurationSeconds, Mode=TwoWay}"
+                           Header="Duration(sec)"
+                           Minimum="5" Maximum="59"
+                           SpinButtonPlacementMode="Compact"
+                           ValidationMode="InvalidInputOverwritten" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
                 <TextBlock x:Uid="EnableDontSleep_ToggleSwitch" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">

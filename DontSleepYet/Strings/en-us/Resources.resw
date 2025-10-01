@@ -218,4 +218,7 @@
   <data name="EnableKeyHookForAudioControl_ToggleSwitch.Text" xml:space="preserve">
     <value>Enable Key hook for volume control.</value>
   </data>
+  <data name="APP_DESCRIPTION" xml:space="preserve">
+    <value>DontSleepYet</value>
+  </data>
 </root>

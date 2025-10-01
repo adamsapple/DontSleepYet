@@ -219,4 +219,7 @@
   <data name="EnableKeyHookForAudioControl_ToggleSwitch.Text" xml:space="preserve">
     <value>ボリューム操作用のKeyHookを有効化する</value>
   </data>
+  <data name="APP_DESCRIPTION" xml:space="preserve">
+    <value>自動ログオフ抑止(DontSleepYet)</value>
+  </data>
 </root>
