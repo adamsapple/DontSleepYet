@@ -9,4 +9,6 @@ public interface IKeyHookService
 {
     void Start();
     void Stop();
+
+    bool IsStarted { get; }
 }

@@ -20,8 +20,21 @@ namespace DontSleepYet.Services;
 public class KeyHookService : Contracts.Services.IKeyHookService
 {
     private UnhookWindowsHookExSafeHandle? hookHandle = null;
+    private readonly HOOKPROC hookProcDelegate;
+    private FreeLibrarySafeHandle? freeLibrarySafeHandle = null;
     public bool IsStarted { get; private set; } = false;
 
+
+    public KeyHookService()
+    {
+        hookProcDelegate = HookCallback;        // メソッドのリファレンスをdelgateとして明確に受け取っておく(ローカルからヒープへ)
+
+        using (var process = Process.GetCurrentProcess())
+        using (var module = process.MainModule)
+        {
+            freeLibrarySafeHandle = Windows.Win32.PInvoke.GetModuleHandle(module!.ModuleName);
+        }
+    }
 
     private void StartHook()
     {
@@ -30,24 +43,20 @@ public class KeyHookService : Contracts.Services.IKeyHookService
             return;
         }
 
-        using (var process = Process.GetCurrentProcess())
-        using (var module = process.MainModule)
-        {
-            // フックを行う
-            // 第1引数	フックするイベントの種類
-            //   13はキーボードフックを表す
-            // 第2引数 フック時のメソッドのアドレス
-            //   フックメソッドを登録する
-            // 第3引数	インスタンスハンドル
-            //   現在実行中のハンドルを渡す
-            // 第4引数	スレッドID
-            //   0を指定すると、すべてのスレッドでフックされる
-            hookHandle = Windows.Win32.PInvoke.SetWindowsHookEx(
-                                                WINDOWS_HOOK_ID.WH_KEYBOARD_LL, 
-                                                HookCallback, 
-                                                Windows.Win32.PInvoke.GetModuleHandle(module!.ModuleName), 
-                                                0);
-        }
+        // フックを行う
+        // 第1引数	フックするイベントの種類
+        //   13はキーボードフックを表す
+        // 第2引数 フック時のメソッドのアドレス
+        //   フックメソッドを登録する
+        // 第3引数	インスタンスハンドル
+        //   現在実行中のハンドルを渡す
+        // 第4引数	スレッドID
+        //   0を指定すると、すべてのスレッドでフックされる
+        hookHandle = Windows.Win32.PInvoke.SetWindowsHookEx(
+                                            WINDOWS_HOOK_ID.WH_KEYBOARD_LL,
+                                            hookProcDelegate,
+                                            freeLibrarySafeHandle, 
+                                            0);
     }
 
     enum KeyState
@@ -140,6 +149,7 @@ public class KeyHookService : Contracts.Services.IKeyHookService
         {
             return;
         }
+
         var ptr = hookHandle.DangerousGetHandle();
         
         Windows.Win32.PInvoke.UnhookWindowsHookEx(new HHOOK(ptr));

@@ -5,7 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
+using DontSleepYet.Models;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
@@ -22,27 +24,6 @@ public partial class MainViewModel : ObservableRecipient
     #endregion Services.
 
     readonly string APP_DESCRIPTION = "自動ログオフ抑止(DontSleepYet)";
-
-    private bool isDontSleepActive = false;
-
-    /// <summary>
-    /// 自動ログオフを抑止するかどうか
-    /// </summary>
-    public bool IsDontSleepActive
-    {
-        get => isDontSleepActive;
-        set
-        {
-            if (isDontSleepActive == value)
-            {
-                return;
-            }
-            SetProperty(ref isDontSleepActive, value);
-
-            dontSleepService.IsActive = isDontSleepActive;
-            localSettingsService.SaveSettingAsync(nameof(IsDontSleepActive), IsDontSleepActive);
-        }
-    }
 
     private bool isRegistStartUp = false;
 
@@ -73,9 +54,10 @@ public partial class MainViewModel : ObservableRecipient
             {
                 StartUpHelper.UnregiserStartUp_CurrentUserRun(APP_DESCRIPTION);
             }
-
         }
     }
+
+
 
     [ObservableProperty]
     private double _cpuUsage = 0.0;
@@ -85,6 +67,9 @@ public partial class MainViewModel : ObservableRecipient
 
     [ObservableProperty]
     private DateTime? _updateCheckedAt = null;
+
+    public LocalSettingsOptions LocalSettingsOptions { get; }
+
 
     private bool isInitialized = false;
     /// <summary>
@@ -98,8 +83,6 @@ public partial class MainViewModel : ObservableRecipient
         {
             return;
         }
-
-        IsDontSleepActive = await localSettingsService.ReadSettingAsync<bool>(nameof(IsDontSleepActive));
 
         isInitialized = true;
     }
@@ -152,13 +135,15 @@ public partial class MainViewModel : ObservableRecipient
                         IDontSleepService dontSleepService,
                         ISystemInfoLiteService systemInfoLiteService,
                         IUpdateCheckService updateCheckService,
-                        IUpdateService updateService)
+                        IUpdateService updateService,
+                        LocalSettingsOptions localSettingsOptions)
     {
         this.localSettingsService  = localSettingsService;
         this.dontSleepService      = dontSleepService;
         this.systemInfoLiteService = systemInfoLiteService;
         this.updateService         = updateService;
         this.updateCheckService    = updateCheckService;
+        this.LocalSettingsOptions  = localSettingsOptions;
 
         // Initialize the service state
         dontSleepService.Initialize();
@@ -173,16 +158,21 @@ public partial class MainViewModel : ObservableRecipient
         CpuUsage = 0.0f;
 
         dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
+
+        //IsEnabledKeyHookForAudioControl = localSettingsOptions.IsEnabledKeyHookForAudioControl;
     }
 
     private readonly DispatchQueue dispatcherQueue;
 
     private void SystemInfoLiteService_OnSystemInfoUpdated(float cpuUsage, float memUsage)
     {
-        var dateTime = Task.Run(async () =>
-        {
-            return await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
-        }).Result;
+        //var dateTime = Task.Run(async () =>
+        //{
+        //    return await localSettingsService.ReadSettingAsync<DateTime>("UpdateCheck.LastCheckedAt", DateTime.MinValue);
+        //}).Result;
+
+        var dateTime = LocalSettingsOptions.UpdateCheck_LastCheckedAt;
 
         //var dispatcherQueue = App.GetService<Window>().DispatcherQueue;
         dispatcherQueue.TryEnqueue(() =>

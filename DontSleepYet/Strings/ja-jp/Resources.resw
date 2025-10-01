@@ -213,4 +213,10 @@
   <data name="LaunchTetheringConfig.Text" xml:space="preserve">
     <value>テザリング設定画面を開く</value>
   </data>
+  <data name="IsDisableLogoff_ToggleItem.Text" xml:space="preserve">
+    <value>自動ログオフを無効化する</value>
+  </data>
+  <data name="EnableKeyHookForAudioControl_ToggleSwitch.Text" xml:space="preserve">
+    <value>ボリューム操作用のKeyHookを有効化する</value>
+  </data>
 </root>
