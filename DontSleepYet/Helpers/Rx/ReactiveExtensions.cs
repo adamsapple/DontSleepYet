@@ -12,11 +12,6 @@ public static class ReactiveExtensions
 {
     public static IObservable<T> ThrottleLatest<T>(this IObservable<T> source, TimeSpan interval)
     {
-        return ThrottleLatest(source, interval, TimeSpan.FromSeconds(2));
-    }
-
-    public static IObservable<T> ThrottleLatest<T>(this IObservable<T> source, TimeSpan interval, TimeSpan timeOut)
-    {
         return Observable.Create<T>(observer =>
         {
             object gate = new();
@@ -26,18 +21,14 @@ public static class ReactiveExtensions
             var lastEmittedAt = DateTimeOffset.MinValue;
 
             IDisposable? timeSubscription = null;
-            IDisposable? idleSubscription = null;
 
             Action emitLatest = () =>
             {
-                if (hasValue)
-                {
-                    //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} => {latestValue} 排出");
+                //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} => {latestValue} 排出");
 
-                    observer.OnNext(latestValue);
-                    hasValue      = false;
-                    lastEmittedAt = DateTimeOffset.UtcNow;
-                }
+                observer.OnNext(latestValue);
+                hasValue      = false;
+                lastEmittedAt = DateTimeOffset.UtcNow;
             };
 
             Action disposeTimer = () =>
@@ -45,34 +36,9 @@ public static class ReactiveExtensions
                 //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} DisposeTimer.");
 
                 timeSubscription?.Dispose();
-                idleSubscription?.Dispose();
-
                 timeSubscription = null;
-                idleSubscription = null;
 
                 isThrottling = false;
-            };
-
-            Action startIdleTimer = () => 
-            {
-                //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} IdleTimer.開始");
-
-                idleSubscription?.Dispose();
-                var idleInterval = timeOut + interval;
-                idleSubscription = Observable.Timer(idleInterval, idleInterval).Subscribe(_ =>
-                {
-                    //var endTime = lastEmittedAt + interval + timeOut;
-                    //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} Idle {endTime.ToString("HH:mm:ss.fff")}");
-                    lock (gate)
-                    {
-                        if (lastEmittedAt + idleInterval >= DateTimeOffset.UtcNow)
-                        {
-                            return;
-                        }
-
-                        disposeTimer();
-                    }
-                });
             };
 
             var subscription = source.Subscribe(value =>
@@ -100,17 +66,17 @@ public static class ReactiveExtensions
                         lock (gate)
                         {
                             //Debug.WriteLine($"{DateTime.Now.ToString("HH:mm:ss.fff")} => interval({hasValue})");
-                            emitLatest();
                             
-                            //isThrottling = false;
+                            if (hasValue)
+                            {
+                                emitLatest();
+                            }
+                            else
+                            {
+                                disposeTimer();
+                            }
                         }
                     });
-
-                    // idleTimerは必要な時だけ起動
-                    if (idleSubscription is null)
-                    {
-                        startIdleTimer();
-                    }
                 }
             },
             ex =>
@@ -125,7 +91,6 @@ public static class ReactiveExtensions
             {
                 lock (gate)
                 {
-                    emitLatest();
                     disposeTimer();
                     observer.OnCompleted();
                 }
