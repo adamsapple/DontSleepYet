@@ -145,7 +145,7 @@ public class DontSleepService : IDontSleepService
             //result = Windows.Win32.PInvoke.SendInput(inputs, Marshal.SizeOf<INPUT>());
         }//*/
 
-        Debug.WriteLine($"Dontsleep.OnTimerElapsed( {plan} ): = {result}, {DateTime.Now}");
+        //Debug.WriteLine($"Dontsleep.OnTimerElapsed( {plan} ): = {result}, {DateTime.Now}");
 
     }
 

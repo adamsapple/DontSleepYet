@@ -1,14 +1,18 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.Input;
 using DontSleepYet.Contracts.Services;
 using DontSleepYet.Helpers;
+using DontSleepYet.Helpers.Rx;
 using DontSleepYet.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DispatchQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
@@ -70,7 +74,8 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
             return;
         }
 
-        LocalSettingsOptions.DontSleepWakeUpDurationSeconds = value;
+        _throttledSubject.OnNext(value);
+        //LocalSettingsOptions.DontSleepWakeUpDurationSeconds = value;
     }
 
     [ObservableProperty]
@@ -86,6 +91,10 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
 
 
     private bool isInitialized = false;
+
+    private readonly Subject<int> _throttledSubject = new();
+
+    #region Commands.
     /// <summary>
     /// 
     /// </summary>
@@ -99,6 +108,17 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
         }
 
         isInitialized = true;
+
+
+        //await Task.Run(() =>
+        //    {
+        //        Observable.Interval(TimeSpan.FromSeconds(0.1))
+        //                  .Take(50)
+        //                  .ThrottleLatest(TimeSpan.FromSeconds(0.3), TimeSpan.FromSeconds(2))
+        //                  .Subscribe(x =>
+        //                  {
+        //                  });
+        //    });
     }
 
 
@@ -135,6 +155,7 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
     //    await localSettingsService.SaveSettingAsync("WindowPosition.X", window.AppWindow.Position.X);
     //    await localSettingsService.SaveSettingAsync("WindowPosition.Y", window.AppWindow.Position.Y);
     //}
+    #endregion Commands.
 
     /// <summary>
     /// CPU使用率
@@ -177,6 +198,14 @@ public partial class MainViewModel : ObservableValidator//ObservableRecipient
 
 
         //IsEnabledKeyHookForAudioControl = localSettingsOptions.IsEnabledKeyHookForAudioControl;
+
+
+        _throttledSubject
+            .ThrottleLatest(TimeSpan.FromSeconds(0.4))
+            .Subscribe(x =>
+            {
+                LocalSettingsOptions.DontSleepWakeUpDurationSeconds = x;
+            });
     }
 
     private readonly DispatchQueue dispatcherQueue;
