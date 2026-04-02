@@ -28,6 +28,7 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
 
     public long SwapMemoryUsage => 0L;
 
+    private PerformanceCounter cpuCounter;
 
     private TimeSpan refleshDuration = TimeSpan.FromSeconds(3);
     public int RefleshRate
@@ -53,6 +54,9 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
         {
             return Task.CompletedTask;
         }
+                        //  カテゴリ、カウンタ、インスタンス
+        cpuCounter = new PerformanceCounter("Processor Information", "% Processor Time", "_Total");
+        cpuCounter.NextValue();
 
         RefleshRate = 2;
 
@@ -112,6 +116,10 @@ internal class SystemInfoLiteService : ISystemInfoLiteService
 
             var mem_usage = 1.0 - (memUsage.AvailableSizeInBytes * 1.0 / memUsage.TotalPhysicalSizeInBytes);
 
+            {
+                cpu_usage = cpuCounter.NextValue() * 0.01f;// / Environment.ProcessorCount;
+            }
+            
             OnSystemInfoUpdated?.Invoke((float)cpu_usage, (float)mem_usage);
         }
 
